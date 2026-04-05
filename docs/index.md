@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "MS for AI"
   text: "人工智能入门系列课程"
-  tagline: 东南大学人工智能协会 131AIClub 开设的 AI 入门课程讲义
+  tagline: 人间烟火，亦是星辰
   actions:
     - theme: brand
       text: 开始学习

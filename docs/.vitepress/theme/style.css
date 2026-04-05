@@ -1,0 +1,198 @@
+/**
+ * 丝滑动效增强
+ * 优化全局过渡动画，使用更平滑的缓动曲线
+ */
+
+/* 定义丝滑缓动曲线 */
+:root {
+  --vp-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --vp-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --vp-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-duration: 0.3s;
+  --transition-duration-fast: 0.2s;
+  --transition-duration-slow: 0.4s;
+}
+
+/* 全局元素过渡优化 */
+* {
+  transition-timing-function: var(--vp-ease-smooth);
+}
+
+/* 链接和按钮 */
+a,
+button,
+.vp-button {
+  transition:
+    color var(--transition-duration-fast) var(--vp-ease-smooth),
+    background-color var(--transition-duration-fast) var(--vp-ease-smooth),
+    border-color var(--transition-duration-fast) var(--vp-ease-smooth),
+    box-shadow var(--transition-duration-fast) var(--vp-ease-smooth),
+    transform var(--transition-duration-fast) var(--vp-ease-smooth),
+    opacity var(--transition-duration-fast) var(--vp-ease-smooth) !important;
+}
+
+/* 导航栏 */
+.VPNav {
+  transition:
+    background-color var(--transition-duration) var(--vp-ease-smooth),
+    box-shadow var(--transition-duration) var(--vp-ease-smooth);
+}
+
+/* 侧边栏 */
+.VPSidebar {
+  transition:
+    transform var(--transition-duration-slow) var(--vp-ease-out-expo),
+    opacity var(--transition-duration-slow) var(--vp-ease-smooth);
+}
+
+/* 内容区域 */
+.VPDoc {
+  transition: opacity var(--transition-duration) var(--vp-ease-smooth);
+}
+
+/* 标题锚点 */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  transition: color var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 锚点链接 */
+.vp-doc .header-anchor {
+  transition:
+    color var(--transition-duration-fast) var(--vp-ease-smooth),
+    opacity var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 代码块 */
+.vp-doc div[class*='language-'] {
+  transition:
+    box-shadow var(--transition-duration-fast) var(--vp-ease-smooth),
+    transform var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 图片 */
+.vp-doc img {
+  transition:
+    transform var(--transition-duration) var(--vp-ease-spring),
+    opacity var(--transition-duration) var(--vp-ease-smooth);
+}
+
+.vp-doc img:hover {
+  transform: scale(1.01);
+}
+
+/* 表格 */
+.vp-doc table {
+  transition: border-color var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+.vp-doc tr {
+  transition: background-color var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 搜索框 */
+.VPLocalSearchBox {
+  transition:
+    opacity var(--transition-duration) var(--vp-ease-smooth),
+    transform var(--transition-duration) var(--vp-ease-out-expo);
+}
+
+/* 返回顶部按钮 */
+.VPDocFooter .back-to-top {
+  transition:
+    opacity var(--transition-duration-fast) var(--vp-ease-smooth),
+    transform var(--transition-duration-fast) var(--vp-ease-spring);
+}
+
+/* 页面切换淡入效果 */
+.VPDoc {
+  animation: pageFadeIn var(--transition-duration-slow) var(--vp-ease-out-expo);
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 首页英雄区域 */
+.VPHome {
+  animation: homeFadeIn 0.6s var(--vp-ease-out-expo);
+}
+
+@keyframes homeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 侧边栏项 hover 效果 */
+.VPSidebarItem .item .link {
+  transition:
+    color var(--transition-duration-fast) var(--vp-ease-smooth),
+    background-color var(--transition-duration-fast) var(--vp-ease-smooth),
+    padding-left var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+.VPSidebarItem .item .link:hover {
+  color: var(--vp-c-brand-1);
+  padding-left: 0.5rem;
+}
+
+/* 导航链接 hover */
+.VPNavBarMenuLink,
+.VPNavBarSocialLinks a {
+  transition:
+    color var(--transition-duration-fast) var(--vp-ease-smooth),
+    opacity var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 移动端菜单 */
+.VPNavScreen {
+  transition:
+    opacity var(--transition-duration) var(--vp-ease-smooth),
+    transform var(--transition-duration) var(--vp-ease-out-expo);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  transition: background-color var(--transition-duration-fast) var(--vp-ease-smooth);
+}
+
+/* 移动端触摸反馈 */
+@media (max-width: 768px) {
+  button,
+  .vp-button {
+    transition: all 0.15s var(--vp-ease-smooth) !important;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .VPDoc,
+  .VPHome {
+    animation: none !important;
+  }
+}

@@ -45,7 +45,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: '由 131AIClub（东南大学人工智能协会）精心打造',
+      message: 'Missing Semester for Artificial Intelligence',
       copyright: 'Copyright © 2026 MS for AI'
     },
 
