@@ -1,4 +1,4 @@
-// node_modules/.pnpm/@vue+devtools-shared@8.0.7/node_modules/@vue/devtools-shared/dist/index.js
+// node_modules/@vue/devtools-shared/dist/index.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7,30 +7,26 @@ var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
 var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-      key = keys[i];
-      if (!__hasOwnProp.call(to, key) && key !== except) {
-        __defProp(to, key, {
-          get: ((k) => from[k]).bind(null, key),
-          enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-        });
-      }
-    }
+  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
+    key = keys[i];
+    if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+      get: ((k) => from[k]).bind(null, key),
+      enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+    });
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target$1) => (target$1 = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target$1, "default", {
+var __toESM = (mod, isNodeMode, target2) => (target2 = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target2, "default", {
   value: mod,
   enumerable: true
-}) : target$1, mod));
+}) : target2, mod));
 var isBrowser = typeof navigator !== "undefined";
 var target = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : typeof global !== "undefined" ? global : {};
 var isInChromePanel = typeof target.chrome !== "undefined" && !!target.chrome.devtools;
 var isInIframe = isBrowser && target.self !== target.top;
 var isInElectron = typeof navigator !== "undefined" && navigator.userAgent?.toLowerCase().includes("electron");
 var isNuxtApp = typeof window !== "undefined" && !!window.__NUXT__;
-var require_rfdc = __commonJSMin(((exports, module) => {
+var import_rfdc = __toESM(__commonJSMin(((exports, module) => {
   module.exports = rfdc;
   function copyBuffer(cur) {
     if (cur instanceof Buffer) return Buffer.from(cur);
@@ -43,7 +39,7 @@ var require_rfdc = __commonJSMin(((exports, module) => {
     constructorHandlers.set(Date, (o) => new Date(o));
     constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
     constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
-    if (opts.constructorHandlers) for (const handler$1 of opts.constructorHandlers) constructorHandlers.set(handler$1[0], handler$1[1]);
+    if (opts.constructorHandlers) for (const handler2 of opts.constructorHandlers) constructorHandlers.set(handler2[0], handler2[1]);
     let handler = null;
     return opts.proto ? cloneProto : clone;
     function cloneArray(a, fn) {
@@ -96,7 +92,7 @@ var require_rfdc = __commonJSMin(((exports, module) => {
     constructorHandlers.set(Date, (o) => new Date(o));
     constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
     constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
-    if (opts.constructorHandlers) for (const handler$1 of opts.constructorHandlers) constructorHandlers.set(handler$1[0], handler$1[1]);
+    if (opts.constructorHandlers) for (const handler2 of opts.constructorHandlers) constructorHandlers.set(handler2[0], handler2[1]);
     let handler = null;
     return opts.proto ? cloneProto : clone;
     function cloneArray(a, fn) {
@@ -162,8 +158,7 @@ var require_rfdc = __commonJSMin(((exports, module) => {
       return o2;
     }
   }
-}));
-var import_rfdc = __toESM(require_rfdc(), 1);
+}))(), 1);
 var classifyRE = /(?:^|[-_/])(\w)/g;
 function toUpper(_, c) {
   return c ? c.toUpperCase() : "";
@@ -188,7 +183,7 @@ function isUrlString(str) {
 }
 var deepClone = (0, import_rfdc.default)({ circles: true });
 
-// node_modules/.pnpm/perfect-debounce@2.1.0/node_modules/perfect-debounce/dist/index.mjs
+// node_modules/perfect-debounce/dist/index.mjs
 var DEBOUNCE_DEFAULTS = { trailing: true };
 function debounce(fn, wait = 25, options = {}) {
   options = {
@@ -257,7 +252,7 @@ async function _applyPromised(fn, _this, args) {
   return await fn.apply(_this, args);
 }
 
-// node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs
+// node_modules/hookable/dist/index.mjs
 function flatHooks(configHooks, hooks2 = {}, parentName) {
   for (const key in configHooks) {
     const subHook = configHooks[key];
@@ -462,11 +457,11 @@ function createHooks() {
   return new Hookable();
 }
 
-// node_modules/.pnpm/birpc@2.9.0/node_modules/birpc/dist/index.mjs
+// node_modules/birpc/dist/index.mjs
 var { clearTimeout: clearTimeout2, setTimeout: setTimeout2 } = globalThis;
 var random = Math.random.bind(Math);
 
-// node_modules/.pnpm/@vue+devtools-kit@8.0.7/node_modules/@vue/devtools-kit/dist/index.js
+// node_modules/@vue/devtools-kit/dist/index.js
 var __create2 = Object.create;
 var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -475,23 +470,19 @@ var __getProtoOf2 = Object.getPrototypeOf;
 var __hasOwnProp2 = Object.prototype.hasOwnProperty;
 var __commonJSMin2 = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
 var __copyProps2 = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (var keys = __getOwnPropNames2(from), i = 0, n = keys.length, key; i < n; i++) {
-      key = keys[i];
-      if (!__hasOwnProp2.call(to, key) && key !== except) {
-        __defProp2(to, key, {
-          get: ((k) => from[k]).bind(null, key),
-          enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable
-        });
-      }
-    }
+  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames2(from), i = 0, n = keys.length, key; i < n; i++) {
+    key = keys[i];
+    if (!__hasOwnProp2.call(to, key) && key !== except) __defProp2(to, key, {
+      get: ((k) => from[k]).bind(null, key),
+      enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable
+    });
   }
   return to;
 };
-var __toESM2 = (mod, isNodeMode, target$1) => (target$1 = mod != null ? __create2(__getProtoOf2(mod)) : {}, __copyProps2(isNodeMode || !mod || !mod.__esModule ? __defProp2(target$1, "default", {
+var __toESM2 = (mod, isNodeMode, target2) => (target2 = mod != null ? __create2(__getProtoOf2(mod)) : {}, __copyProps2(isNodeMode || !mod || !mod.__esModule ? __defProp2(target2, "default", {
   value: mod,
   enumerable: true
-}) : target$1, mod));
+}) : target2, mod));
 function getComponentTypeName(options) {
   if (typeof options === "function") return options.displayName || options.name || options.__VUE_DEVTOOLS_COMPONENT_GUSSED_NAME__ || "";
   const name = options.name || options._componentTag || options.__VUE_DEVTOOLS_COMPONENT_GUSSED_NAME__ || options.__name;
@@ -722,9 +713,9 @@ function unhighlight() {
 }
 var inspectInstance = null;
 function inspectFn(e) {
-  const target$1 = e.target;
-  if (target$1) {
-    const instance = target$1.__vueParentComponent;
+  const target2 = e.target;
+  if (target2) {
+    const instance = target2.__vueParentComponent;
     if (instance) {
       inspectInstance = instance;
       if (instance.vnode.el) {
@@ -795,8 +786,8 @@ function scrollToComponent(options) {
       const bounds = getComponentBoundingRect(instance);
       if (bounds.width || bounds.height) {
         const name = getInstanceName(instance);
-        const el$1 = getContainerElement();
-        el$1 ? update({
+        const el2 = getContainerElement();
+        el2 ? update({
           ...options,
           name,
           bounds
@@ -806,7 +797,7 @@ function scrollToComponent(options) {
           bounds
         });
         setTimeout(() => {
-          if (el$1) el$1.style.display = "none";
+          if (el2) el2.style.display = "none";
         }, 1500);
       }
     }, 1200);
@@ -913,8 +904,8 @@ var StateEditor = class {
       else if (toRaw$1(object) instanceof Set) object.delete(Array.from(object.values())[field]);
       else Reflect.deleteProperty(object, field);
       if (!state.remove) {
-        const target$1 = object[state.newKey || field];
-        if (this.refEditor.isRef(target$1)) this.refEditor.set(target$1, value);
+        const target2 = object[state.newKey || field];
+        if (this.refEditor.isRef(target2)) this.refEditor.set(target2, value);
         else if (toRaw$1(object) instanceof Map) object.set(state.newKey || field, value);
         else if (toRaw$1(object) instanceof Set) object.add(value);
         else object[state.newKey || field] = value;
@@ -933,12 +924,12 @@ var RefStateEditor = class {
       }
       const currentKeys = Object.keys(value);
       if (ref instanceof Map) {
-        const previousKeysSet$1 = new Set(ref.keys());
+        const previousKeysSet2 = new Set(ref.keys());
         currentKeys.forEach((key) => {
           ref.set(key, Reflect.get(value, key));
-          previousKeysSet$1.delete(key);
+          previousKeysSet2.delete(key);
         });
-        previousKeysSet$1.forEach((key) => ref.delete(key));
+        previousKeysSet2.forEach((key) => ref.delete(key));
         return;
       }
       const previousKeysSet = new Set(Object.keys(ref));
@@ -978,8 +969,8 @@ function getTimelineLayersStateFromStorage() {
   };
 }
 target.__VUE_DEVTOOLS_KIT_TIMELINE_LAYERS ??= [];
-var devtoolsTimelineLayers = new Proxy(target.__VUE_DEVTOOLS_KIT_TIMELINE_LAYERS, { get(target$1, prop, receiver) {
-  return Reflect.get(target$1, prop, receiver);
+var devtoolsTimelineLayers = new Proxy(target.__VUE_DEVTOOLS_KIT_TIMELINE_LAYERS, { get(target2, prop, receiver) {
+  return Reflect.get(target2, prop, receiver);
 } });
 function addTimelineLayer(options, descriptor) {
   devtoolsState.timelineLayersState[descriptor.id] = false;
@@ -990,8 +981,8 @@ function addTimelineLayer(options, descriptor) {
   });
 }
 target.__VUE_DEVTOOLS_KIT_INSPECTOR__ ??= [];
-var devtoolsInspector = new Proxy(target.__VUE_DEVTOOLS_KIT_INSPECTOR__, { get(target$1, prop, receiver) {
-  return Reflect.get(target$1, prop, receiver);
+var devtoolsInspector = new Proxy(target.__VUE_DEVTOOLS_KIT_INSPECTOR__, { get(target2, prop, receiver) {
+  return Reflect.get(target2, prop, receiver);
 } });
 var callInspectorUpdatedHook = debounce(() => {
   devtoolsContext.hooks.callHook(DevToolsMessagingHookKeys.SEND_INSPECTOR_TO_CLIENT, getActiveInspectors());
@@ -1064,8 +1055,8 @@ var DevToolsMessagingHookKeys = (function(DevToolsMessagingHookKeys2) {
   return DevToolsMessagingHookKeys2;
 })({});
 function createDevToolsCtxHooks() {
-  const hooks$1 = createHooks();
-  hooks$1.hook(DevToolsContextHookKeys.ADD_INSPECTOR, ({ inspector, plugin }) => {
+  const hooks2 = createHooks();
+  hooks2.hook(DevToolsContextHookKeys.ADD_INSPECTOR, ({ inspector, plugin }) => {
     addInspector(inspector, plugin.descriptor);
   });
   const debounceSendInspectorTree = debounce(async ({ inspectorId, plugin }) => {
@@ -1078,19 +1069,19 @@ function createDevToolsCtxHooks() {
       rootNodes: []
     };
     await new Promise((resolve) => {
-      hooks$1.callHookWith(async (callbacks) => {
+      hooks2.callHookWith(async (callbacks) => {
         await Promise.all(callbacks.map((cb) => cb(_payload)));
         resolve();
       }, DevToolsV6PluginAPIHookKeys.GET_INSPECTOR_TREE);
     });
-    hooks$1.callHookWith(async (callbacks) => {
+    hooks2.callHookWith(async (callbacks) => {
       await Promise.all(callbacks.map((cb) => cb({
         inspectorId,
         rootNodes: _payload.rootNodes
       })));
     }, DevToolsMessagingHookKeys.SEND_INSPECTOR_TREE_TO_CLIENT);
   }, 120);
-  hooks$1.hook(DevToolsContextHookKeys.SEND_INSPECTOR_TREE, debounceSendInspectorTree);
+  hooks2.hook(DevToolsContextHookKeys.SEND_INSPECTOR_TREE, debounceSendInspectorTree);
   const debounceSendInspectorState = debounce(async ({ inspectorId, plugin }) => {
     if (!inspectorId || !plugin?.descriptor?.app || devtoolsState.highPerfModeEnabled) return;
     const inspector = getInspector(inspectorId, plugin.descriptor.app);
@@ -1102,12 +1093,12 @@ function createDevToolsCtxHooks() {
     };
     const ctx = { currentTab: `custom-inspector:${inspectorId}` };
     if (_payload.nodeId) await new Promise((resolve) => {
-      hooks$1.callHookWith(async (callbacks) => {
+      hooks2.callHookWith(async (callbacks) => {
         await Promise.all(callbacks.map((cb) => cb(_payload, ctx)));
         resolve();
       }, DevToolsV6PluginAPIHookKeys.GET_INSPECTOR_STATE);
     });
-    hooks$1.callHookWith(async (callbacks) => {
+    hooks2.callHookWith(async (callbacks) => {
       await Promise.all(callbacks.map((cb) => cb({
         inspectorId,
         nodeId: _payload.nodeId,
@@ -1115,46 +1106,46 @@ function createDevToolsCtxHooks() {
       })));
     }, DevToolsMessagingHookKeys.SEND_INSPECTOR_STATE_TO_CLIENT);
   }, 120);
-  hooks$1.hook(DevToolsContextHookKeys.SEND_INSPECTOR_STATE, debounceSendInspectorState);
-  hooks$1.hook(DevToolsContextHookKeys.CUSTOM_INSPECTOR_SELECT_NODE, ({ inspectorId, nodeId, plugin }) => {
+  hooks2.hook(DevToolsContextHookKeys.SEND_INSPECTOR_STATE, debounceSendInspectorState);
+  hooks2.hook(DevToolsContextHookKeys.CUSTOM_INSPECTOR_SELECT_NODE, ({ inspectorId, nodeId, plugin }) => {
     const inspector = getInspector(inspectorId, plugin.descriptor.app);
     if (!inspector) return;
     inspector.selectedNodeId = nodeId;
   });
-  hooks$1.hook(DevToolsContextHookKeys.TIMELINE_LAYER_ADDED, ({ options, plugin }) => {
+  hooks2.hook(DevToolsContextHookKeys.TIMELINE_LAYER_ADDED, ({ options, plugin }) => {
     addTimelineLayer(options, plugin.descriptor);
   });
-  hooks$1.hook(DevToolsContextHookKeys.TIMELINE_EVENT_ADDED, ({ options, plugin }) => {
+  hooks2.hook(DevToolsContextHookKeys.TIMELINE_EVENT_ADDED, ({ options, plugin }) => {
     if (devtoolsState.highPerfModeEnabled || !devtoolsState.timelineLayersState?.[plugin.descriptor.id] && ![
       "performance",
       "component-event",
       "keyboard",
       "mouse"
     ].includes(options.layerId)) return;
-    hooks$1.callHookWith(async (callbacks) => {
+    hooks2.callHookWith(async (callbacks) => {
       await Promise.all(callbacks.map((cb) => cb(options)));
     }, DevToolsMessagingHookKeys.SEND_TIMELINE_EVENT_TO_CLIENT);
   });
-  hooks$1.hook(DevToolsContextHookKeys.GET_COMPONENT_INSTANCES, async ({ app }) => {
+  hooks2.hook(DevToolsContextHookKeys.GET_COMPONENT_INSTANCES, async ({ app }) => {
     const appRecord = app.__VUE_DEVTOOLS_NEXT_APP_RECORD__;
     if (!appRecord) return null;
     const appId = appRecord.id.toString();
     return [...appRecord.instanceMap].filter(([key]) => key.split(":")[0] === appId).map(([, instance]) => instance);
   });
-  hooks$1.hook(DevToolsContextHookKeys.GET_COMPONENT_BOUNDS, async ({ instance }) => {
+  hooks2.hook(DevToolsContextHookKeys.GET_COMPONENT_BOUNDS, async ({ instance }) => {
     return getComponentBoundingRect(instance);
   });
-  hooks$1.hook(DevToolsContextHookKeys.GET_COMPONENT_NAME, ({ instance }) => {
+  hooks2.hook(DevToolsContextHookKeys.GET_COMPONENT_NAME, ({ instance }) => {
     return getInstanceName(instance);
   });
-  hooks$1.hook(DevToolsContextHookKeys.COMPONENT_HIGHLIGHT, ({ uid }) => {
+  hooks2.hook(DevToolsContextHookKeys.COMPONENT_HIGHLIGHT, ({ uid }) => {
     const instance = activeAppRecord.value.instanceMap.get(uid);
     if (instance) highlight(instance);
   });
-  hooks$1.hook(DevToolsContextHookKeys.COMPONENT_UNHIGHLIGHT, () => {
+  hooks2.hook(DevToolsContextHookKeys.COMPONENT_UNHIGHLIGHT, () => {
     unhighlight();
   });
-  return hooks$1;
+  return hooks2;
 }
 target.__VUE_DEVTOOLS_KIT_APP_RECORDS__ ??= [];
 target.__VUE_DEVTOOLS_KIT_ACTIVE_APP_RECORD__ ??= {};
@@ -1214,20 +1205,19 @@ function setActiveAppRecordId(id) {
   updateAllStates();
 }
 var devtoolsState = new Proxy(target[STATE_KEY], {
-  get(target$1, property) {
+  get(target$3, property) {
     if (property === "appRecords") return devtoolsAppRecords;
     else if (property === "activeAppRecordId") return activeAppRecord.id;
     else if (property === "tabs") return target.__VUE_DEVTOOLS_KIT_CUSTOM_TABS__;
     else if (property === "commands") return target.__VUE_DEVTOOLS_KIT_CUSTOM_COMMANDS__;
     return target[STATE_KEY][property];
   },
-  deleteProperty(target$1, property) {
-    delete target$1[property];
+  deleteProperty(target2, property) {
+    delete target2[property];
     return true;
   },
-  set(target$1, property, value) {
-    ({ ...target[STATE_KEY] });
-    target$1[property] = value;
+  set(target$4, property, value) {
+    target$4[property] = value;
     target[STATE_KEY][property] = value;
     return true;
   }
@@ -1300,8 +1290,8 @@ function openInEditor(options = {}) {
   }
 }
 target.__VUE_DEVTOOLS_KIT_PLUGIN_BUFFER__ ??= [];
-var devtoolsPluginBuffer = new Proxy(target.__VUE_DEVTOOLS_KIT_PLUGIN_BUFFER__, { get(target$1, prop, receiver) {
-  return Reflect.get(target$1, prop, receiver);
+var devtoolsPluginBuffer = new Proxy(target.__VUE_DEVTOOLS_KIT_PLUGIN_BUFFER__, { get(target2, prop, receiver) {
+  return Reflect.get(target2, prop, receiver);
 } });
 function _getSettings(settings) {
   const _settings = {};
@@ -1579,7 +1569,7 @@ target[ROUTER_KEY] ??= {};
 var devtoolsRouterInfo = new Proxy(target[ROUTER_INFO_KEY], { get(target$1, property) {
   return target[ROUTER_INFO_KEY][property];
 } });
-var devtoolsRouter = new Proxy(target[ROUTER_KEY], { get(target$1, property) {
+var devtoolsRouter = new Proxy(target[ROUTER_KEY], { get(target$2, property) {
   if (property === "value") return target[ROUTER_KEY];
 } });
 function getRoutes(router) {
@@ -1614,7 +1604,7 @@ function filterCurrentRoute(route) {
   }
   return route;
 }
-function normalizeRouterInfo(appRecord, activeAppRecord$1) {
+function normalizeRouterInfo(appRecord, activeAppRecord2) {
   function init() {
     const router = appRecord.app?.config.globalProperties.$router;
     const currentRoute = filterCurrentRoute(router?.currentRoute.value);
@@ -1631,13 +1621,13 @@ function normalizeRouterInfo(appRecord, activeAppRecord$1) {
   }
   init();
   hook.on.componentUpdated(debounce(() => {
-    if (activeAppRecord$1.value?.app !== appRecord.app) return;
+    if (activeAppRecord2.value?.app !== appRecord.app) return;
     init();
     if (devtoolsState.highPerfModeEnabled) return;
     devtoolsContext.hooks.callHook(DevToolsMessagingHookKeys.ROUTER_INFO_UPDATED, { state: target[ROUTER_INFO_KEY] });
   }, 200));
 }
-function createDevToolsApi(hooks$1) {
+function createDevToolsApi(hooks2) {
   return {
     async getInspectorTree(payload) {
       const _payload = {
@@ -1646,7 +1636,7 @@ function createDevToolsApi(hooks$1) {
         rootNodes: []
       };
       await new Promise((resolve) => {
-        hooks$1.callHookWith(async (callbacks) => {
+        hooks2.callHookWith(async (callbacks) => {
           await Promise.all(callbacks.map((cb) => cb(_payload)));
           resolve();
         }, DevToolsV6PluginAPIHookKeys.GET_INSPECTOR_TREE);
@@ -1661,7 +1651,7 @@ function createDevToolsApi(hooks$1) {
       };
       const ctx = { currentTab: `custom-inspector:${payload.inspectorId}` };
       await new Promise((resolve) => {
-        hooks$1.callHookWith(async (callbacks) => {
+        hooks2.callHookWith(async (callbacks) => {
           await Promise.all(callbacks.map((cb) => cb(_payload, ctx)));
           resolve();
         }, DevToolsV6PluginAPIHookKeys.GET_INSPECTOR_STATE);
@@ -1669,21 +1659,21 @@ function createDevToolsApi(hooks$1) {
       return _payload.state;
     },
     editInspectorState(payload) {
-      const stateEditor$1 = new StateEditor();
+      const stateEditor2 = new StateEditor();
       const _payload = {
         ...payload,
         app: activeAppRecord.value.app,
         set: (obj, path = payload.path, value = payload.state.value, cb) => {
-          stateEditor$1.set(obj, path, value, cb || stateEditor$1.createDefaultSetCallback(payload.state));
+          stateEditor2.set(obj, path, value, cb || stateEditor2.createDefaultSetCallback(payload.state));
         }
       };
-      hooks$1.callHookWith((callbacks) => {
+      hooks2.callHookWith((callbacks) => {
         callbacks.forEach((cb) => cb(_payload));
       }, DevToolsV6PluginAPIHookKeys.EDIT_INSPECTOR_STATE);
     },
     sendInspectorState(inspectorId) {
       const inspector = getInspector(inspectorId);
-      hooks$1.callHook(DevToolsContextHookKeys.SEND_INSPECTOR_STATE, {
+      hooks2.callHook(DevToolsContextHookKeys.SEND_INSPECTOR_STATE, {
         inspectorId,
         plugin: {
           descriptor: inspector.descriptor,
@@ -3030,7 +3020,7 @@ var require_speakingurl$1 = __commonJSMin2(((exports, module) => {
       "(",
       ")"
     ].join("");
-    var getSlug = function getSlug$1(input, opts) {
+    var getSlug = function getSlug2(input, opts) {
       var separator = "-";
       var result = "";
       var diatricString = "";
@@ -3126,8 +3116,8 @@ var require_speakingurl$1 = __commonJSMin2(((exports, module) => {
         }
         result += ch.replace(new RegExp("[^\\w\\s" + allowedChars + "_-]", "g"), separator);
       }
-      if (titleCase) result = result.replace(/(\w)(\S*)/g, function(_, i$1, r) {
-        var j = i$1.toUpperCase() + (r !== null ? r : "");
+      if (titleCase) result = result.replace(/(\w)(\S*)/g, function(_, i2, r) {
+        var j = i2.toUpperCase() + (r !== null ? r : "");
         return Object.keys(customReplacements).indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
       });
       result = result.replace(/\s+/g, separator).replace(new RegExp("\\" + separator + "+", "g"), separator).replace(new RegExp("(^\\" + separator + "+|\\" + separator + "+$)", "g"), "");
@@ -3139,12 +3129,12 @@ var require_speakingurl$1 = __commonJSMin2(((exports, module) => {
       if (!maintainCase && !titleCase) result = result.toLowerCase();
       return result;
     };
-    var createSlug = function createSlug$1(opts) {
+    var createSlug = function createSlug2(opts) {
       return function getSlugWithConfig(input) {
         return getSlug(input, opts);
       };
     };
-    var escapeChars = function escapeChars$1(input) {
+    var escapeChars = function escapeChars2(input) {
       return input.replace(/[-\\^$*+?.()|[\]{}\/]/g, "\\$&");
     };
     var isReplacedCustomChar = function(ch, customReplacements) {
@@ -3166,10 +3156,9 @@ var require_speakingurl$1 = __commonJSMin2(((exports, module) => {
     }
   })(exports);
 }));
-var require_speakingurl = __commonJSMin2(((exports, module) => {
+var import_speakingurl = __toESM2(__commonJSMin2(((exports, module) => {
   module.exports = require_speakingurl$1();
-}));
-var import_speakingurl = __toESM2(require_speakingurl(), 1);
+}))(), 1);
 var appRecordInfo = target.__VUE_DEVTOOLS_NEXT_APP_RECORD_INFO__ ??= {
   id: 0,
   appIds: /* @__PURE__ */ new Set()
@@ -3658,13 +3647,13 @@ var walker = (object, identities, superJson, dedupe, path = [], objectsInThisPat
     if (seen) return dedupe ? { transformedValue: null } : seen;
   }
   if (!isDeep(object, superJson)) {
-    const transformed$1 = transformValue(object, superJson);
-    const result$1 = transformed$1 ? {
-      transformedValue: transformed$1.value,
-      annotations: [transformed$1.type]
+    const transformed2 = transformValue(object, superJson);
+    const result2 = transformed2 ? {
+      transformedValue: transformed2.value,
+      annotations: [transformed2.type]
     } : { transformedValue: object };
-    if (!primitive) seenObjects.set(object, result$1);
-    return result$1;
+    if (!primitive) seenObjects.set(object, result2);
+    return result2;
   }
   if (includes(objectsInThisPath, object)) return { transformedValue: null };
   const transformationResult = transformValue(object, superJson);
@@ -3710,7 +3699,7 @@ function isOneOf(a, b, c, d, e) {
 function isUndefined(payload) {
   return getType(payload) === "Undefined";
 }
-var isNullOrUndefined = isOneOf(isNull, isUndefined);
+isOneOf(isNull, isUndefined);
 function assignProp(carry, key, newVal, originalObject, includeNonenumerable) {
   const propType = {}.propertyIsEnumerable.call(originalObject, key) ? "enumerable" : "nonenumerable";
   if (propType === "enumerable") carry[key] = newVal;
@@ -3721,15 +3710,15 @@ function assignProp(carry, key, newVal, originalObject, includeNonenumerable) {
     configurable: true
   });
 }
-function copy(target$1, options = {}) {
-  if (isArray$1(target$1)) return target$1.map((item) => copy(item, options));
-  if (!isPlainObject$1(target$1)) return target$1;
-  const props = Object.getOwnPropertyNames(target$1);
-  const symbols = Object.getOwnPropertySymbols(target$1);
+function copy(target2, options = {}) {
+  if (isArray$1(target2)) return target2.map((item) => copy(item, options));
+  if (!isPlainObject$1(target2)) return target2;
+  const props = Object.getOwnPropertyNames(target2);
+  const symbols = Object.getOwnPropertySymbols(target2);
   return [...props, ...symbols].reduce((carry, key) => {
     if (isArray$1(options.props) && !options.props.includes(key)) return carry;
-    const val = target$1[key];
-    assignProp(carry, key, copy(val, options), target$1, options.nonenumerable);
+    const val = target2[key];
+    assignProp(carry, key, copy(val, options), target2, options.nonenumerable);
     return carry;
   }, {});
 }
@@ -3797,14 +3786,14 @@ SuperJSON.registerClass = SuperJSON.defaultInstance.registerClass.bind(SuperJSON
 SuperJSON.registerSymbol = SuperJSON.defaultInstance.registerSymbol.bind(SuperJSON.defaultInstance);
 SuperJSON.registerCustom = SuperJSON.defaultInstance.registerCustom.bind(SuperJSON.defaultInstance);
 SuperJSON.allowErrorProps = SuperJSON.defaultInstance.allowErrorProps.bind(SuperJSON.defaultInstance);
-var serialize = SuperJSON.serialize;
-var deserialize = SuperJSON.deserialize;
-var stringify$1 = SuperJSON.stringify;
-var parse$1 = SuperJSON.parse;
-var registerClass = SuperJSON.registerClass;
-var registerCustom = SuperJSON.registerCustom;
-var registerSymbol = SuperJSON.registerSymbol;
-var allowErrorProps = SuperJSON.allowErrorProps;
+SuperJSON.serialize;
+SuperJSON.deserialize;
+SuperJSON.stringify;
+SuperJSON.parse;
+SuperJSON.registerClass;
+SuperJSON.registerCustom;
+SuperJSON.registerSymbol;
+SuperJSON.allowErrorProps;
 target.__VUE_DEVTOOLS_KIT_MESSAGE_CHANNELS__ ??= [];
 target.__VUE_DEVTOOLS_KIT_RPC_CLIENT__ ??= null;
 target.__VUE_DEVTOOLS_KIT_RPC_SERVER__ ??= null;
