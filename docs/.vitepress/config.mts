@@ -32,6 +32,8 @@ export default defineConfig({
             { text: '第二章：Python 基础', link: '/chapters/chapter2' },
             { text: '第三章：NumPy', link: '/chapters/chapter3' },
             { text: '第四章：PyTorch', link: '/chapters/chapter4' },
+            { text: '第五章：计算机视觉', link: '/chapters/chapter5' },
+            { text: '第六章：自然语言处理', link: '/chapters/chapter6' },
             { text: '第九章：大语言模型', link: '/chapters/chapter9' }
           ]
         }
@@ -58,7 +60,8 @@ export default defineConfig({
     },
 
     outline: {
-      label: '页面导航'
+      label: '页面导航',
+      level: [2, 3]
     },
 
     lastUpdated: {

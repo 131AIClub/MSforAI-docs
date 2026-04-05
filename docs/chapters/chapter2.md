@@ -191,7 +191,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
->>> 是输入提示符. 在这后面输入 print("Hello, world!"):
+\>\>\> 是输入提示符. 在这后面输入 print("Hello, world!"):
 >>>
 >>
 
@@ -239,13 +239,10 @@ b = "Hello, MS for AI!"
 > 动态类型语言: 程序在运行时才去检查类型. 例如:
 >
 > ```python
+> a = 1
+> b = "2"
+> c = a + b
 > ```
-
-a = 1
-b = "2"
-c = a + b
-
-```
 > 这个Python程序会报错. 因为`a`与`b`一个是整数类型, 一个是字符串类型, 不能执行`+`操作. Python在运行程序后, 会在内部隐式自动标注变量的类型, 只有运算的时候出现问题了, 才会报错.
 
 Python中能实现随便修改类型的操作:
