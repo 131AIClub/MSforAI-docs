@@ -52,7 +52,8 @@ export default defineConfig({
     },
 
     outline: {
-      label: '页面导航'
+      label: '页面导航',
+      level: [2, 6]
     },
 
     lastUpdated: {
