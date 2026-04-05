@@ -46,11 +46,11 @@ export default defineConfig({
 
     footer: {
       message: '由 131AIClub（东南大学人工智能协会）精心打造',
-      copyright: 'Copyright © 2024 MS for AI'
+      copyright: 'Copyright © 2026 MS for AI'
     },
 
     editLink: {
-      pattern: 'https://github.com/131AIClub/ms4ai-docs/edit/main/docs/:path',
+      pattern: 'https://github.com/131AIClub/MSforAI-docs/edit/master/docs/:path',
       text: '在 GitHub 上编辑此页'
     },
 
