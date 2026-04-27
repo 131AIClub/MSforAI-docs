@@ -388,44 +388,37 @@ print(b.grad)
 > 修改该参数有很多种方式, 最暴力的方式是直接修改:
 >
 > ```python
+> import torch
+> x = torch.randn(4)
+> x.requires_grad = True
 > ```
-
-import torch
-x = torch.randn(4)
-x.requires_grad = True
-
-```
 > 一般来说, 张量在创建时, 可以指定是否需要梯度, 在创建张量的函数种一般会带有一个参数requires_grad. 你可以在定义张量时指定. 
 > ```python
-import torch
-w_no_grad = torch.randn(2, 3)
-w_with_grad = torch.randn(2, 3, requires_grad=True)
-
-print(w_no_grad.requires_grad, w_with_grad.requires_grad)
-```
-
+> import torch
+> w_no_grad = torch.randn(2, 3)
+> w_with_grad = torch.randn(2, 3, requires_grad=True)
+> 
+> print(w_no_grad.requires_grad, w_with_grad.requires_grad)
+> ```
 > 被 nn.Parameter 包装的张量, 一般来说它的 requires_grad 是 True(会自动设置张量的 requires_grad 为 True).
 >
 > ```python
+> import torch
+> import torch.nn as nn
+> w_no_grad = torch.randn(2, 3)
+> w_param = nn.Parameter(torch.randn(2, 3))
+> 
+> print(w_no_grad.requires_grad, w_param.requires_grad)    # False True
 > ```
-
-import torch
-import torch.nn as nn
-w_no_grad = torch.randn(2, 3)
-w_param = nn.Parameter(torch.randn(2, 3))
-
-print(w_no_grad.requires_grad, w_param.requires_grad)    # False True
-
-```
 > 你可以使用`requires_grad_`方法来修改单个张量, 或者一个Module的参数是否需要梯度:
 > ```python
-import torch
-x = torch.randn(4)
-x.requires_grad_(True)
-
-model = Model()
-model.requires_grad_(False)
-```
+> import torch
+> x = torch.randn(4)
+> x.requires_grad_(True)
+> 
+> model = Model()
+> model.requires_grad_(False)
+> ```
 
 ### Optimizer 优化器
 
@@ -449,5 +442,258 @@ for _ in range(epoch):
         optimizer.step()
 ```
 
+### 数据组织
+
+在前面的优化器示例中，我们通过列表推导式手搓了一个包含 100 个样本的数据集，并在训练循环中通过索引 `data[i]` 逐个获取数据。
+
+这种方式在写简单 Demo 时还凑合，但在真实的深度学习任务中，往往面临着几十 GB 甚至 TB 级别的数据。把它们一次性全塞进内存里显然是不卫生且不可行的；而且我们还需要对数据进行打乱（Shuffle）、分批次（Batching）、并行加载等复杂操作。
+
+为了优雅地解决这些问题，PyTorch 提供了两个极其核心的工具类：`Dataset` 和 `DataLoader`。
+
+#### 1. Dataset 数据集
+
+`torch.utils.data.Dataset` 是一个抽象类，用于表示你的数据集。你可以把它理解为一个“数据字典”。 只要你继承了这个类，并且实现了两个核心魔法方法，PyTorch 就承认这是一个合法的 Dataset：
+
+1. `__len__`: 告诉系统这个数据集一共有多少个样本。
+
+2. `__getitem__`: 告诉系统当给定一个索引 `idx` 时，应该返回什么样的数据和标签。
+
+下面我们来正统地定义一个自定义数据集：
+
+```python
+import torch
+from torch.utils.data import Dataset
+
+class MyCustomDataset(Dataset):def __init__(self, num_samples=1000):super().__init__()
+        # 在 __init__ 中通常进行数据路径的加载、文件名的读取等轻量级操作# 这里为了演示，我们直接生成一些模拟的特征和标签
+        self.num_samples = num_samples
+        self.features = torch.randn(num_samples, 10) # 10维特征
+        self.labels = torch.randint(0, 2, (num_samples,)) # 0或1的二分类标签def __len__(self):# 返回数据集的总大小return self.num_samples
+    
+    def __getitem__(self, idx):# 根据索引 idx 获取单个样本# 实际应用中，这里经常会写读取硬盘图片、进行数据增强(Transforms)的代码
+        feature = self.features[idx]
+        label = self.labels[idx]
+        return feature, label
+
+# 实例化数据集
+my_dataset = MyCustomDataset(num_samples=100)
+print(f"数据集大小: {len(my_dataset)}")
+
+# 测试抽取第 0 个样本
+first_feature, first_label = my_dataset[0]
+print(f"第一个样本特征 shape: {first_feature.shape}, 标签: {first_label}")
+```
+
+#### 2. Dataloader 数据加载器
+
+有了 Dataset 之后，我们虽然可以按索引拿数据了，但每次只能拿一条。在训练模型时，我们需要按批次（Batch）输入数据计算梯度以加速训练，并且在每个 Epoch 开始前最好把数据打乱。
+
+`torch.utils.data.DataLoader` 就是干这个的。它包装了 Dataset，在后台帮你处理所有的批次拼接、打乱以及多进程加载工作。
+
+```python
+from torch.utils.data import DataLoader
+
+# 将之前定义好的 dataset 喂给 DataLoader# batch_size=16 意味着每次吐出 16 个样本
+# shuffle=True 意味着在每个 epoch 开始时打乱数据顺序# num_workers=2 意味着开启两个后台进程来加速数据读取（Windows下有时容易报错，通常设为0即可）
+train_loader = DataLoader(dataset=my_dataset, batch_size=16, shuffle=True, num_workers=0)
+
+# DataLoader 是一个可迭代对象，可以直接用 for 循环遍历for batch_idx, (batch_features, batch_labels) in enumerate(train_loader):
+print(f"Batch {batch_idx}:")
+print(f"  Features shape: {batch_features.shape}") # 形状会变成 (16, 10)
+print(f"  Labels shape: {batch_labels.shape}")   # 形状会变成 (16,)# 模拟只打印第一个 batch 就退出break 
+```
+
+#### 3. 将 DataLoader 融入训练循环
+
+使用了 DataLoader 后，我们之前的训练循环就可以彻底抛弃难看的手动索引了。代码会变得异常干净且高效：
+
+```python
+import torch.nn as nn
+from torch.optim import SGD
+
+model = nn.Linear(10, 2)
+loss_function = nn.CrossEntropyLoss()
+optimizer = SGD(model.parameters(), lr=1e-3, momentum=0.9)
+
+epochs = 5
+for epoch in range(epochs):
+    total_loss = 0.0# 直接遍历 DataLoader，它每次会自动给你一个 batch 的数据！for batch_features, batch_labels in train_loader:
+        
+    # 1. 前向传播
+    pred = model(batch_features)
+        
+    # 2. 计算损失
+    loss = loss_function(pred, batch_labels)
+    total_loss += loss.item()
+        
+    # 3. 反向传播与优化
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+        
+    avg_loss = total_loss / len(train_loader) # 除以 batch 的总数
+    print(f"Epoch {epoch + 1}/{epochs} - Average Loss: {avg_loss:.4f}")
+```
+
+至此，从**损失函数**、**自动求导**、**优化器**再到**数据组织**，构成了一个完整的 PyTorch 基础训练流水线。
+
 ## Quick Start
 
+下面, 我们使用一个例子来快速了解一下一个PyTorch深度学习应用的组成. 熟悉PyTorch.
+
+之前我们搞过线性回归波士顿房价. 我们在第三章的实践中(如果你做了实践), 我们使用numpy实现了一个手写数字识别任务的训练. 现在我们使用PyTorch实现一个相同的任务.
+
+### 定义模型
+
+首先我们要定义模型(本质是一个nn.Module):
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MLP(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        
+        # 手写数字图片大小是 28x28，展平后是 784 维的一维向量
+        self.flatten = nn.Flatten()
+        
+        self.linear1 = nn.Linear(784, 256)
+        self.linear2 = nn.Linear(256, 128)
+        self.linear3 = nn.Linear(128, 10)
+    
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.flatten(x)
+        x = self.linear1(x)
+        x = F.relu(x)
+        x = self.linear2(x)
+        x = F.relu(x)
+        x = self.linear3(x)
+        return x
+```
+
+### 数据准备与组织
+
+现在我们需要准备数据. 我们直接使用`torchvision`来下载MNIST数据集.
+
+```python
+from torchvision import datasets, transforms
+
+transform = transforms.ToTensor()
+
+train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+test_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+```
+
+我们获取到了一个torch中的`Dataset`类对象`train_dataset`. 接下来我们使用`dataloader`来包装它.
+
+```python
+from torch.utils.data import DataLoader
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False)
+```
+
+### 实例化模型, 损失函数与优化器
+
+接下来我们定义模型, 损失函数与优化器. 做好训练准备.
+
+```python
+model = MLP()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001) 
+```
+
+### 加速设备识别与迁移
+
+我们经常需要识别所运行的平台拥有什么样的加速硬件, 然后再将模型等张量迁移到设备上来调用硬件加速计算能力. 如果未检查到硬件, 我们应该回退到cpu上(提升代码鲁棒性).
+
+```python
+def get_device():
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+        print(f"已挂载 GPU: {torch.cuda.get_device_name(0)}")
+    
+    elif torch.backends.mps.is_available():
+        device = torch.device('mps')
+        print("已挂载 Apple MPS 加速")
+    
+    else:
+        device = torch.device('cpu')
+        print("未检测到加速硬件，使用 CPU 进行计算")
+    
+    return device
+
+device = get_device()
+model.to(device) 
+```
+
+下面是训练代码:
+
+```python
+from tqdm import tqdm
+epoch = 5
+
+for _ in range(epoch):
+    model.train()
+    train_pbar = tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs} [Train]')
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+        optimizer.step()
+        
+        train_pbar.set_postfix({'loss': f'{loss.item():.4f}'})
+        
+    model.eval()
+    test_loss = 0
+    correct = 0
+    with torch.no_grad():
+        test_pbar = tqdm(test_loader, desc=f'Epoch {epoch+1}/{epochs} [Test ]')
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += criterion(output, target).item()
+            pred = output.argmax(dim=1, keepdim=True)
+            correct += pred.eq(target.view_as(pred)).sum().item()
+    test_loss /= len(test_loader)
+    accuracy = 100. * correct / len(test_loader.dataset)
+    print(f'\n>>> Epoch {epoch+1} Summary: Test Loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%\n')
+```
+
+### 模型保存
+
+一般来说，我们保存模型时保存该模型的`state_dict`。`state_dict`是一个Python字典，保存了模型的“状态”。这个状态包含了模型的结构，以及这个结构的参数。例如，我们如果查看刚刚训练的模型的`state_dict`，是这样的：
+
+```python
+print(model.state_dict())
+```
+
+不只是模型，优化器也是可以保存`state_dict`的。
+
+```python
+print(optimizer.state_dict())
+```
+
+保存`state_dict`可以使用`torch.save`函数，其本身会调用`pickle`进行序列化保存。
+
+
+```python
+PATH = r'./model.pt'
+torch.save(model.state_dict(), PATH)
+```
+
+
+
+
+### 加载模型进行推理
+
+模型的参数与模型的“类”是分开保存的。所以需要向一个创建好的对象导入`state_dict`。不过在此之前，先要用`torch.load`把路径中的文件读出来，变成Python字典对象：
+
+```python
+model = MLP()
+state_dict = torch.load(PATH)
+mode.load_state_dict(state_dict)
+```

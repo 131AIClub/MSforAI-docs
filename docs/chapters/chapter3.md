@@ -9,7 +9,7 @@ from typing import List
 def matmul(mat1: List[List[float]], mat2: List[List[float]]) -> List[List[float]]:
     r1, c1 = len(mat1), len(mat1[0])
     r2, c2 = len(mat2), len(mat2[0])
-    assert c1 == r2    _# 形状检查_
+    assert c1 == r2    # 形状检查
     result = [[0. for _ in range(c2)] for _ in range(r1)]
     for i in range(r1):
         for j in range(c2):
@@ -54,7 +54,7 @@ print(t)
 ```python
 import numpy as np
 batch_size: int = 32
-_# 随机生成两个矩阵_
+# 随机生成两个矩阵
 mat1 = np.random.rand(batch_size, 784)
 mat2 = np.random.rand(784, 2048)
 
@@ -221,7 +221,18 @@ print(np.argmax(tsr))
 numpy 中可以方便转置, 转置操作是很便宜的. 因为它只会修改元信息.
 
 ```python
+a = np.array([[1, 2, 3], [4, 5, 6]])  # shape (2, 3)
+print(a)
+print(a.shape)
 
+b = a.T  # 转置，shape (3, 2)
+print(b)
+print(b.shape)
+
+# 转置只是修改了 strides 和 shape 的读写顺序，不涉及数据拷贝
+# 可以验证：a 和 b 共享同一块内存
+a[0, 0] = 100
+print(b[0, 0])  # 输出 100，说明确实共享内存
 ```
 
 ### Broadcast 广播机制
