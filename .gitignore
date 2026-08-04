@@ -13,6 +13,7 @@ dist/
 build/
 .vitepress/dist/
 .vitepress/cache/
+docs/.vitepress/cache/
 
 # Environment files
 .env

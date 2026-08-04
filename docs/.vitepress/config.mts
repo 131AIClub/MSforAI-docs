@@ -14,12 +14,15 @@ export default defineConfig({
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: '/logo.svg',
+    logo: {
+      src: '/mark.svg',
+      alt: 'MS for AI'
+    },
 
     nav: [
       { text: '首页', link: '/' },
-      { text: '讲义', link: '/chapters/preface' },
-      { text: '关于我们', link: '/about' }
+      { text: '课程讲义', link: '/chapters/preface' },
+      { text: '关于', link: '/about' }
     ],
 
     sidebar: {

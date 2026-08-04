@@ -5,6 +5,9 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource/ibm-plex-mono": "^5.2.6",
+    "@lucide/vue": "^1.28.0",
     "markdown-it-mathjax3": "^4",
     "vitepress": "2.0.0-alpha.16"
   }
