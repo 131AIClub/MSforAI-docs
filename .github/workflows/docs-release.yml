@@ -133,20 +133,27 @@ jobs:
             exit 1
           fi
 
+      - name: Link the existing Vercel project
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p site/.vercel
+          node -e 'const fs = require("node:fs"); fs.writeFileSync("site/.vercel/project.json", `${JSON.stringify({ orgId: process.env.VERCEL_ORG_ID, projectId: process.env.VERCEL_PROJECT_ID })}\n`)'
+
       - name: Deploy verified site to production
         working-directory: site
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TELEMETRY_DISABLED: "1"
         run: >-
           npx --yes vercel@58.5.1 deploy
           --prod
           --yes
           --no-color
           --token "$VERCEL_TOKEN"
-          --scope "$VERCEL_ORG_ID"
-          --project "$VERCEL_PROJECT_ID"
           --meta "githubCommitSha=${{ needs.quality.outputs.release_sha }}"
           --meta "githubCommitRef=master"
           --meta "githubRepo=131AIClub/MSforAI-docs"
