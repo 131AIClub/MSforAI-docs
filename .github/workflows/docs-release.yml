@@ -17,6 +17,8 @@ jobs:
     name: Sync contributors and build
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      release_sha: ${{ steps.release_revision.outputs.sha }}
 
     steps:
       - name: Check out the complete history
@@ -54,10 +56,14 @@ jobs:
           git commit -m "chore: update contributor identities [skip ci]"
           git push origin HEAD:master
 
+      - name: Record release revision
+        id: release_revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Upload verified site
         uses: actions/upload-artifact@v4
         with:
-          name: vitepress-site-${{ github.sha }}
+          name: vitepress-site-${{ steps.release_revision.outputs.sha }}
           path: docs/.vitepress/dist
           if-no-files-found: error
           include-hidden-files: true
@@ -78,7 +84,7 @@ jobs:
       - name: Download verified site
         uses: actions/download-artifact@v4
         with:
-          name: vitepress-site-${{ github.sha }}
+          name: vitepress-site-${{ needs.quality.outputs.release_sha }}
           path: site
 
       - name: Set up Node.js
@@ -114,3 +120,6 @@ jobs:
           --token "$VERCEL_TOKEN"
           --scope "$VERCEL_ORG_ID"
           --project "$VERCEL_PROJECT_ID"
+          --meta "githubCommitSha=${{ needs.quality.outputs.release_sha }}"
+          --meta "githubCommitRef=master"
+          --meta "githubRepo=131AIClub/MSforAI-docs"
