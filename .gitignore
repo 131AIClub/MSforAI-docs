@@ -19,6 +19,7 @@ docs/.vitepress/cache/
 .env
 .env.local
 .env.*.local
+!docs/.env
 
 # IDE
 .idea/
