@@ -24,6 +24,7 @@ jobs:
       - name: Check out the complete history
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -45,6 +46,12 @@ jobs:
       - name: Commit updated contributor identities
         shell: bash
         run: |
+          git fetch origin master
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/master)" ]]; then
+            echo "::error::master advanced while this run was building. Run the workflow again from the latest revision."
+            exit 1
+          fi
+
           git add -- docs/.vitepress/contributors.authors.json
           if git diff --cached --quiet; then
             echo "Contributor identities are already up to date."
@@ -59,6 +66,15 @@ jobs:
       - name: Record release revision
         id: release_revision
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify release revision is current
+        shell: bash
+        run: |
+          git fetch origin master
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/master)" ]]; then
+            echo "::error::The verified build is no longer the latest master revision."
+            exit 1
+          fi
 
       - name: Upload verified site
         uses: actions/upload-artifact@v4
@@ -105,6 +121,17 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Verify production revision is current
+        shell: bash
+        env:
+          RELEASE_SHA: ${{ needs.quality.outputs.release_sha }}
+        run: |
+          remote_sha="$(git ls-remote https://github.com/131AIClub/MSforAI-docs.git refs/heads/master | cut -f1)"
+          if [[ "$RELEASE_SHA" != "$remote_sha" ]]; then
+            echo "::error::A newer master revision exists; refusing to publish an outdated artifact."
+            exit 1
+          fi
 
       - name: Deploy verified site to production
         working-directory: site
