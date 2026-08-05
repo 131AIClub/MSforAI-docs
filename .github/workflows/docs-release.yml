@@ -101,7 +101,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vitepress-site-${{ needs.quality.outputs.release_sha }}
-          path: site
+          path: site/dist
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -141,6 +141,12 @@ jobs:
           mkdir -p site/.vercel
           node -e 'const fs = require("node:fs"); fs.writeFileSync("site/.vercel/project.json", `${JSON.stringify({ orgId: process.env.VERCEL_ORG_ID, projectId: process.env.VERCEL_PROJECT_ID })}\n`)'
 
+      - name: Prepare Vercel prebuilt output
+        run: |
+          mkdir -p site/.vercel/output/static
+          cp -R site/dist/. site/.vercel/output/static/
+          node -e 'const fs = require("node:fs"); fs.writeFileSync("site/.vercel/output/config.json", `${JSON.stringify({ version: 3 })}\n`)'
+
       - name: Deploy verified site to production
         working-directory: site
         env:
@@ -150,6 +156,7 @@ jobs:
           VERCEL_TELEMETRY_DISABLED: "1"
         run: >-
           npx --yes vercel@58.5.1 deploy
+          --prebuilt
           --prod
           --yes
           --no-color
