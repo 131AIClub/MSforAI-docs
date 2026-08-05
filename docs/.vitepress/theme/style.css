@@ -861,10 +861,30 @@ button {
   line-height: 1.4;
 }
 
-.article-end__heading > span {
+.article-end__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.article-end__meta > span {
   color: var(--ms-secondary);
   font-family: var(--ms-mono);
   font-size: 10px;
+}
+
+.article-end__meta > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ms-secondary);
+  font-size: 11px;
+  font-weight: 560;
+}
+
+.article-end__meta > a:hover {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
 }
 
 .article-end__status {
