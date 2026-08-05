@@ -62,11 +62,7 @@ onBeforeUnmount(() => giscusRoot.value?.replaceChildren())
 </script>
 
 <template>
-  <section class="article-comments" aria-labelledby="comments-title">
-    <div class="article-end__heading">
-      <div id="comments-title" role="heading" aria-level="2">评论</div>
-    </div>
-
+  <section class="article-comments">
     <p v-if="!isConfigured" class="article-end__status">
       评论区尚未配置。
     </p>
