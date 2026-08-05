@@ -1,0 +1,116 @@
+name: Build and release docs
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: docs-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Sync contributors and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the complete history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Update contributor identities
+        run: npm run contributors:update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build documentation
+        run: npm run docs:build
+
+      - name: Commit updated contributor identities
+        shell: bash
+        run: |
+          git add -- docs/.vitepress/contributors.authors.json
+          if git diff --cached --quiet; then
+            echo "Contributor identities are already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update contributor identities [skip ci]"
+          git push origin HEAD:master
+
+      - name: Upload verified site
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitepress-site-${{ github.sha }}
+          path: docs/.vitepress/dist
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 3
+
+  publish:
+    name: Publish to Vercel
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: Production
+
+    steps:
+      - name: Download verified site
+        uses: actions/download-artifact@v4
+        with:
+          name: vitepress-site-${{ github.sha }}
+          path: site
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Vercel credentials
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          for variable in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::${variable} is not configured."
+              exit 1
+            fi
+          done
+
+      - name: Deploy verified site to production
+        working-directory: site
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: >-
+          npx --yes vercel@58.5.1 deploy
+          --prod
+          --yes
+          --no-color
+          --token "$VERCEL_TOKEN"
+          --scope "$VERCEL_ORG_ID"
+          --project "$VERCEL_PROJECT_ID"
