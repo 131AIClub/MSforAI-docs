@@ -28,6 +28,10 @@ export interface CourseNavigationData {
 
 export const courseNavigation = data
 export const chapterNavigation = data.chapters
+export const coursePages: CoursePageItem[] = [
+  ...courseNavigation.standalone,
+  ...chapterNavigation.flatMap((chapter) => [chapter, ...chapter.articles])
+]
 
 export function normalizeContentPath(path: string) {
   return path.replace(/index(?:\.html)?$/, '').replace(/\.html$/, '').replace(/\/$/, '')
@@ -55,4 +59,18 @@ export function findArticleByPath(path: string) {
   const currentPath = normalizeContentPath(path)
   const chapter = findChapterByPath(currentPath)
   return chapter?.articles.find((article) => isCurrentRoute(currentPath, article.link))
+}
+
+export function findCoursePageByPath(path: string) {
+  return coursePages.find((page) => isCurrentRoute(path, page.link))
+}
+
+export function findCoursePageNeighbors(path: string) {
+  const currentIndex = coursePages.findIndex((page) => isCurrentRoute(path, page.link))
+  if (currentIndex < 0) return {}
+
+  return {
+    previous: coursePages[currentIndex - 1],
+    next: coursePages[currentIndex + 1]
+  }
 }

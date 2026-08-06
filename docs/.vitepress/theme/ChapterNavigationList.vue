@@ -76,7 +76,10 @@ watch(
         'is-expanded': isExpanded(chapter.link)
       }"
     >
-      <div class="chapter-navigation-row">
+      <div
+        class="chapter-navigation-row"
+        :class="{ 'is-current': isChapterRoute(currentPath, chapter) }"
+      >
         <a
           class="chapter-navigation-item"
           :class="{ 'is-current': isCurrent(chapter.link) }"
