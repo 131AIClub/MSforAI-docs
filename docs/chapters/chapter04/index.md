@@ -1,7 +1,7 @@
 ---
-title: "第三章 NumPy，使用计算机进行线性代数计算"
-order: 3
-index: "03"
+title: "NumPy"
+order: 4
+index: "04"
 label: "COMPUTING"
 description: "用数组表达向量与矩阵，理解批量计算如何连接数学和程序。"
 ---

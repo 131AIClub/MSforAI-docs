@@ -1,7 +1,7 @@
 ---
-title: "第五章 计算机视觉"
-order: 5
-index: "05"
+title: "计算机视觉"
+order: 6
+index: "06"
 label: "PERCEPTION"
 description: "从卷积到图像分类，理解视觉模型如何提取并组合图像特征。"
 ---

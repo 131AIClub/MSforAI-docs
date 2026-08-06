@@ -1,9 +1,9 @@
 ---
-title: "第二章 Python 基础"
+title: "Python"
 order: 2
 index: "02"
-label: "TOOLING"
-description: "掌握 Python 语法、开发环境与高效编程方式，准备好 AI 实践工具。"
+label: "PROGRAMMING！"
+description: "掌握 Python 语法、开发环境与高效编程方式"
 ---
 
 # 第二章 Python 基础

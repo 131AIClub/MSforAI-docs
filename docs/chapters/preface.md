@@ -1,5 +1,5 @@
 ---
-title: "序章"
+title: "前言"
 order: 0
 index: "00"
 label: "ORIENTATION"

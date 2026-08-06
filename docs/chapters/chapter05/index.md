@@ -1,7 +1,7 @@
 ---
-title: "第四章 深度学习框架 PyTorch"
-order: 4
-index: "04"
+title: "PyTorch"
+order: 5
+index: "05"
 label: "FRAMEWORK"
 description: "完成张量计算、自动微分和训练循环，运行一个完整的学习系统。"
 ---
