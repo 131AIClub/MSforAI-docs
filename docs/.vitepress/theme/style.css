@@ -2321,8 +2321,11 @@ a.contributor:hover {
 
 .chapter-sidebar {
   position: fixed;
-  top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px));
-  bottom: 0;
+  top: calc(
+    var(--vp-nav-height) + var(--vp-layout-top-height, 0px) -
+    var(--chapter-sidebar-footer-offset, 0px)
+  );
+  bottom: var(--chapter-sidebar-footer-offset, 0px);
   left: 0;
   z-index: calc(var(--vp-z-index-footer) - 1);
   display: flex;
@@ -2527,6 +2530,32 @@ a.contributor:hover {
 .chapter-navigation-toggle:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: -2px;
+}
+
+.chapter-article-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 160ms ease,
+    visibility 0s linear 220ms;
+}
+
+.chapter-navigation-group.is-expanded .chapter-article-collapse {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 180ms ease 40ms,
+    visibility 0s linear;
+}
+
+.chapter-article-collapse__inner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .chapter-article-list {
@@ -2910,6 +2939,7 @@ html.chapter-sidebar-resizing * {
   .chapter-sidebar,
   .chapter-reading-layout .VPContent,
   .chapter-navigation-toggle svg,
+  .chapter-article-collapse,
   .chapter-reading-layout .reader-control__icon,
   .chapter-reading-layout .reader-controls,
   .chapter-reading-layout .VPDoc .aside,

@@ -20,7 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
-const expandedChapter = ref<string | null>(null)
+const expandedChapters = ref(new Set<string>())
 const currentPath = computed(() => normalizeContentPath(route.path))
 
 function isCurrent(link: string) {
@@ -28,18 +28,26 @@ function isCurrent(link: string) {
 }
 
 function isExpanded(chapterLink: string) {
-  return expandedChapter.value === chapterLink
+  return expandedChapters.value.has(chapterLink)
 }
 
 function toggleChapter(chapterLink: string) {
-  expandedChapter.value = isExpanded(chapterLink) ? null : chapterLink
+  const nextExpandedChapters = new Set(expandedChapters.value)
+  if (nextExpandedChapters.has(chapterLink)) {
+    nextExpandedChapters.delete(chapterLink)
+  } else {
+    nextExpandedChapters.add(chapterLink)
+  }
+  expandedChapters.value = nextExpandedChapters
 }
 
 watch(
   currentPath,
   (path) => {
     const activeChapter = findChapterByPath(path)
-    expandedChapter.value = activeChapter?.articles.length ? activeChapter.link : null
+    if (activeChapter?.articles.length) {
+      expandedChapters.value = new Set([...expandedChapters.value, activeChapter.link])
+    }
   },
   { immediate: true }
 )
@@ -108,23 +116,28 @@ watch(
       </div>
 
       <div
-        v-if="chapter.articles.length && isExpanded(chapter.link)"
-        class="chapter-article-list"
-        role="list"
+        v-if="chapter.articles.length"
+        class="chapter-article-collapse"
+        :aria-hidden="!isExpanded(chapter.link)"
+        :inert="isExpanded(chapter.link) ? undefined : ''"
       >
-        <a
-          v-for="article in chapter.articles"
-          :key="article.link"
-          class="chapter-article-item"
-          :class="{ 'is-current': isCurrent(article.link) }"
-          :href="withBase(article.link)"
-          :title="article.text"
-          :aria-current="isCurrent(article.link) ? 'page' : undefined"
-          role="listitem"
-          @click="emit('navigate')"
-        >
-          {{ article.text }}
-        </a>
+        <div class="chapter-article-collapse__inner">
+          <div class="chapter-article-list" role="list">
+            <a
+              v-for="article in chapter.articles"
+              :key="article.link"
+              class="chapter-article-item"
+              :class="{ 'is-current': isCurrent(article.link) }"
+              :href="withBase(article.link)"
+              :title="article.text"
+              :aria-current="isCurrent(article.link) ? 'page' : undefined"
+              role="listitem"
+              @click="emit('navigate')"
+            >
+              {{ article.text }}
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>

@@ -22,11 +22,13 @@ const router = useRouter()
 const isChapterPage = computed(() => page.value.relativePath.startsWith('chapters/'))
 const chapterSidebarOpen = ref(true)
 const chapterSidebarWidth = ref(DEFAULT_SIDEBAR_WIDTH)
+const chapterSidebarFooterOffset = ref(0)
 const viewportWidth = ref(1440)
 const layoutReady = ref(false)
 const articleLoadingVisible = ref(false)
 let storedSidebarState: string | null = null
 let layoutReadyFrame = 0
+let footerOffsetFrame = 0
 let codeBlockObserver: MutationObserver | null = null
 let articleLoadTimer: ReturnType<typeof setTimeout> | null = null
 let activeArticleLoad: string | null = null
@@ -46,7 +48,8 @@ const layoutClasses = computed(() => ({
 }))
 
 const layoutStyle = computed(() => ({
-  '--chapter-sidebar-width': `${chapterSidebarWidth.value}px`
+  '--chapter-sidebar-width': `${chapterSidebarWidth.value}px`,
+  '--chapter-sidebar-footer-offset': `${chapterSidebarFooterOffset.value}px`
 }))
 
 function clampSidebarWidth(width: number) {
@@ -74,6 +77,27 @@ function syncSidebarToViewport() {
   } else {
     chapterSidebarOpen.value = viewportWidth.value >= 1280
   }
+}
+
+function syncSidebarFooterOffset() {
+  footerOffsetFrame = 0
+  const footer = document.querySelector<HTMLElement>('.VPFooter')
+  if (!footer) {
+    chapterSidebarFooterOffset.value = 0
+    return
+  }
+
+  const viewportHeight = document.documentElement.clientHeight
+  chapterSidebarFooterOffset.value = Math.max(0, Math.ceil(viewportHeight - footer.getBoundingClientRect().top))
+}
+
+function scheduleSidebarFooterOffsetSync() {
+  if (!footerOffsetFrame) footerOffsetFrame = requestAnimationFrame(syncSidebarFooterOffset)
+}
+
+function handleViewportChange() {
+  syncSidebarToViewport()
+  scheduleSidebarFooterOffsetSync()
 }
 
 function storeSidebarState() {
@@ -188,10 +212,12 @@ onMounted(() => {
   codeBlockObserver.observe(document.body, { childList: true, subtree: true })
   readSidebarPreferences()
   syncSidebarToViewport()
+  syncSidebarFooterOffset()
   layoutReadyFrame = requestAnimationFrame(() => {
     layoutReady.value = true
   })
-  window.addEventListener('resize', syncSidebarToViewport, { passive: true })
+  window.addEventListener('resize', handleViewportChange, { passive: true })
+  window.addEventListener('scroll', scheduleSidebarFooterOffsetSync, { passive: true })
   window.addEventListener('keydown', handleKeydown)
 })
 
@@ -199,11 +225,16 @@ onBeforeUnmount(() => {
   removeArticleLoadingHooks()
   codeBlockObserver?.disconnect()
   cancelAnimationFrame(layoutReadyFrame)
-  window.removeEventListener('resize', syncSidebarToViewport)
+  cancelAnimationFrame(footerOffsetFrame)
+  window.removeEventListener('resize', handleViewportChange)
+  window.removeEventListener('scroll', scheduleSidebarFooterOffsetSync)
   window.removeEventListener('keydown', handleKeydown)
 })
 
-watch(() => page.value.relativePath, () => requestAnimationFrame(() => enhanceCodeBlocks()))
+watch(() => page.value.relativePath, () => requestAnimationFrame(() => {
+  enhanceCodeBlocks()
+  syncSidebarFooterOffset()
+}))
 </script>
 
 <template>
