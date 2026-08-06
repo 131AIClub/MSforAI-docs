@@ -107,6 +107,67 @@ button {
   background: rgb(15 23 38 / 88%);
 }
 
+@keyframes article-load-progress-run {
+  from {
+    transform: translateX(-110%) scaleX(0.58);
+  }
+
+  to {
+    transform: translateX(360%) scaleX(0.82);
+  }
+}
+
+.article-load-progress {
+  position: fixed;
+  top: var(--vp-nav-height);
+  right: 0;
+  left: 0;
+  z-index: calc(var(--vp-z-index-nav) + 2);
+  height: 3px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent);
+  pointer-events: none;
+}
+
+.article-load-progress__bar {
+  display: block;
+  width: 28%;
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+  background: var(--vp-c-brand-1);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--vp-c-brand-1) 52%, transparent);
+  transform-origin: left center;
+  animation: article-load-progress-run 1.05s ease-in-out infinite;
+}
+
+.article-load-progress__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.article-load-progress-enter-active,
+.article-load-progress-leave-active {
+  transition: opacity 120ms ease;
+}
+
+.article-load-progress-enter-from,
+.article-load-progress-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-load-progress__bar {
+    width: 40%;
+    animation: none;
+    transform: none;
+  }
+}
+
 .VPNavBar .title {
   border-bottom: 0;
 }

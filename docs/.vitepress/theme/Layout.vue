@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useData } from 'vitepress'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useData, useRouter, type Router } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import ArticleEnd from './ArticleEnd.vue'
 import ChapterNavigationList from './ChapterNavigationList.vue'
@@ -15,16 +15,27 @@ const SIDEBAR_WIDTH_KEY = 'msforai:chapter-sidebar-width'
 const DEFAULT_SIDEBAR_WIDTH = 268
 const MIN_SIDEBAR_WIDTH = 220
 const MAX_SIDEBAR_WIDTH = 360
+const ARTICLE_LOAD_DELAY = 150
 
 const { page } = useData()
+const router = useRouter()
 const isChapterPage = computed(() => page.value.relativePath.startsWith('chapters/'))
 const chapterSidebarOpen = ref(true)
 const chapterSidebarWidth = ref(DEFAULT_SIDEBAR_WIDTH)
 const viewportWidth = ref(1440)
 const layoutReady = ref(false)
+const articleLoadingVisible = ref(false)
 let storedSidebarState: string | null = null
 let layoutReadyFrame = 0
 let codeBlockObserver: MutationObserver | null = null
+let articleLoadTimer: ReturnType<typeof setTimeout> | null = null
+let activeArticleLoad: string | null = null
+let previousBeforePageLoad: Router['onBeforePageLoad']
+let previousAfterPageLoad: Router['onAfterPageLoad']
+let previousAfterRouteChange: Router['onAfterRouteChange']
+let installedBeforePageLoad: Router['onBeforePageLoad']
+let installedAfterPageLoad: Router['onAfterPageLoad']
+let installedAfterRouteChange: Router['onAfterRouteChange']
 
 const chapterSidebarOverlay = computed(() => viewportWidth.value < 1280)
 const layoutClasses = computed(() => ({
@@ -103,7 +114,75 @@ function handleKeydown(event: KeyboardEvent) {
   }
 }
 
+function navigationKey(to: string) {
+  const target = new URL(to, window.location.href)
+  return `${target.pathname}${target.search}`
+}
+
+function isArticleTarget(to: string) {
+  return /\/chapters(?:\/|$)/.test(new URL(to, window.location.href).pathname)
+}
+
+function clearArticleLoadTimer() {
+  if (articleLoadTimer) clearTimeout(articleLoadTimer)
+  articleLoadTimer = null
+}
+
+function beginArticleLoad(to: string) {
+  clearArticleLoadTimer()
+  articleLoadingVisible.value = false
+  activeArticleLoad = isArticleTarget(to) ? navigationKey(to) : null
+  if (!activeArticleLoad) return
+  const pendingKey = activeArticleLoad
+  articleLoadTimer = setTimeout(() => {
+    if (activeArticleLoad === pendingKey) articleLoadingVisible.value = true
+  }, ARTICLE_LOAD_DELAY)
+}
+
+function finishArticleLoad(to: string) {
+  if (activeArticleLoad !== navigationKey(to)) return
+  clearArticleLoadTimer()
+  activeArticleLoad = null
+  articleLoadingVisible.value = false
+}
+
+function installArticleLoadingHooks() {
+  previousBeforePageLoad = router.onBeforePageLoad
+  previousAfterPageLoad = router.onAfterPageLoad
+  previousAfterRouteChange = router.onAfterRouteChange
+
+  installedBeforePageLoad = async (to) => {
+    if ((await previousBeforePageLoad?.(to)) === false) return false
+    beginArticleLoad(to)
+  }
+  installedAfterPageLoad = async (to) => {
+    await previousAfterPageLoad?.(to)
+  }
+  installedAfterRouteChange = async (to) => {
+    try {
+      await previousAfterRouteChange?.(to)
+    } finally {
+      await nextTick()
+      finishArticleLoad(to)
+    }
+  }
+
+  router.onBeforePageLoad = installedBeforePageLoad
+  router.onAfterPageLoad = installedAfterPageLoad
+  router.onAfterRouteChange = installedAfterRouteChange
+}
+
+function removeArticleLoadingHooks() {
+  clearArticleLoadTimer()
+  activeArticleLoad = null
+  articleLoadingVisible.value = false
+  if (router.onBeforePageLoad === installedBeforePageLoad) router.onBeforePageLoad = previousBeforePageLoad
+  if (router.onAfterPageLoad === installedAfterPageLoad) router.onAfterPageLoad = previousAfterPageLoad
+  if (router.onAfterRouteChange === installedAfterRouteChange) router.onAfterRouteChange = previousAfterRouteChange
+}
+
 onMounted(() => {
+  installArticleLoadingHooks()
   enhanceCodeBlocks()
   codeBlockObserver = new MutationObserver(() => enhanceCodeBlocks())
   codeBlockObserver.observe(document.body, { childList: true, subtree: true })
@@ -117,6 +196,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  removeArticleLoadingHooks()
   codeBlockObserver?.disconnect()
   cancelAnimationFrame(layoutReadyFrame)
   window.removeEventListener('resize', syncSidebarToViewport)
@@ -129,6 +209,17 @@ watch(() => page.value.relativePath, () => requestAnimationFrame(() => enhanceCo
 <template>
   <DefaultTheme.Layout :class="layoutClasses" :style="layoutStyle">
     <template #layout-top>
+      <Transition name="article-load-progress">
+        <div
+          v-if="articleLoadingVisible"
+          class="article-load-progress"
+          role="progressbar"
+          aria-label="正在加载文章"
+        >
+          <span class="article-load-progress__bar" aria-hidden="true" />
+          <span class="article-load-progress__label">正在加载文章</span>
+        </div>
+      </Transition>
       <ChapterSidebar
         v-if="isChapterPage"
         :open="chapterSidebarOpen"
