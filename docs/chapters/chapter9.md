@@ -2,7 +2,7 @@
 
 ## 分词器 Tokenizer
 
-Tokenizer 是 LLM 的基础部件之一，其目的是将 raw text(通常以 Unicode strings 表示)转换为模型可以处理的数据。由于通常情况下模型只能处理数字，因此 Tokenizer 所发挥的作用就是将我们的 raw text 转为 Interger ID(**encode**)，其中每个 Interger 代表一个 Token，并将这些 tokens 解码成 Unicode strings(**decode**)
+Tokenizer 是 LLM 的基础部件之一，其目的是将 raw text（通常以 Unicode strings 表示）转换为模型可以处理的数据。由于通常情况下模型只能处理数字，因此 Tokenizer 所发挥的作用就是将我们的 raw text 转为 Interger ID(**encode**)，其中每个 Interger 代表一个 Token，并将这些 tokens 解码成 Unicode strings(**decode**)
 
 Tokenizer 的 **vocabulary size** 就是所有可能出现的 token 的个数和
 
@@ -10,7 +10,7 @@ Tokenizer 的 **vocabulary size** 就是所有可能出现的 token 的个数和
 
 #### Word-based Tokenizer
 
-当我们想对一个句子做切分，第一个出现在我们脑子里的想法就是将原始文本切分(spilt)为单词，例如
+当我们想对一个句子做切分，第一个出现在我们脑子里的想法就是将原始文本切分（spilt）为单词，例如
 
 特点：保留了完整的语义，但是会导致词表极其庞大，且容易遇到 OOV(Out-of-Vocabulary)问题
 
