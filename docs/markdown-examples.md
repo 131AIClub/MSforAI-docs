@@ -32,53 +32,93 @@ export default {
 }
 ```
 
-## Custom Containers
+## GitHub Alerts
 
 **Input**
 
 ```md
-::: info
-This is an info box.
+> [!NOTE]
+> Context worth keeping in mind while reading.
+
+> [!TIP]
+> A practical way to complete the task more efficiently.
+
+> [!IMPORTANT] Required before continuing
+> Complete this step before moving to the next section.
+
+> [!WARNING]
+> Check the environment before running the command.
+
+> [!CAUTION]
+> This action may overwrite existing output.
+```
+
+**Output**
+
+> [!NOTE]
+> Context worth keeping in mind while reading.
+
+> [!TIP]
+> A practical way to complete the task more efficiently.
+
+> [!IMPORTANT] Required before continuing
+> Complete this step before moving to the next section.
+
+> [!WARNING]
+> Check the environment before running the command.
+
+> [!CAUTION]
+> This action may overwrite existing output.
+
+## Alert Containers
+
+**Input**
+
+```md
+::: note
+Context worth keeping in mind while reading.
 :::
 
 ::: tip
-This is a tip.
+A practical way to complete the task more efficiently.
+:::
+
+::: important Required before continuing
+Complete this step before moving to the next section.
 :::
 
 ::: warning
-This is a warning.
+Check the environment before running the command.
 :::
 
-::: danger
-This is a dangerous warning.
-:::
-
-::: details
-This is a details block.
+::: caution
+This action may overwrite existing output.
 :::
 ```
 
 **Output**
 
-::: info
-This is an info box.
+::: note
+Context worth keeping in mind while reading.
 :::
 
 ::: tip
-This is a tip.
+A practical way to complete the task more efficiently.
+:::
+
+::: important Required before continuing
+Complete this step before moving to the next section.
 :::
 
 ::: warning
-This is a warning.
+Check the environment before running the command.
 :::
 
-::: danger
-This is a dangerous warning.
+::: caution
+This action may overwrite existing output.
 :::
 
-::: details
-This is a details block.
-:::
+The existing `info`, `danger`, and `details` containers remain available with their original VitePress behavior.
 
 ## More
 

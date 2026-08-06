@@ -684,6 +684,162 @@ button {
   font-size: 14px;
 }
 
+/* GitHub-style alerts use a restrained signal rail instead of card chrome. */
+.VPDoc .vp-doc .ms-alert {
+  --ms-alert-accent: var(--vp-c-brand-1);
+  --ms-alert-bg: var(--vp-c-brand-soft);
+  --ms-alert-border: var(--vp-c-divider);
+  --ms-alert-code: var(--vp-c-brand-soft);
+
+  position: relative;
+  margin: 24px 0;
+  overflow: hidden;
+  border: 1px solid var(--ms-alert-border);
+  border-left: 3px solid var(--ms-alert-accent);
+  border-radius: 4px;
+  padding: 14px 16px 15px;
+  color: var(--ms-reading);
+  background: var(--ms-alert-bg);
+  box-shadow: none;
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.VPDoc .vp-doc .ms-alert__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 7px;
+  color: var(--ms-alert-accent);
+  font-family: var(--ms-display);
+  font-size: 13px;
+  font-weight: 720;
+  line-height: 1.4;
+}
+
+.VPDoc .vp-doc .ms-alert__title svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.VPDoc .vp-doc .ms-alert__body {
+  min-width: 0;
+  color: var(--ms-reading);
+}
+
+.VPDoc .vp-doc .ms-alert__body > :first-child {
+  margin-top: 0;
+}
+
+.VPDoc .vp-doc .ms-alert__body > :last-child {
+  margin-bottom: 0;
+}
+
+.VPDoc .vp-doc .ms-alert__body p,
+.VPDoc .vp-doc .ms-alert__body li {
+  color: var(--ms-reading);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.VPDoc .vp-doc .ms-alert__body p {
+  margin-block: 8px;
+}
+
+.VPDoc .vp-doc .ms-alert__body ul,
+.VPDoc .vp-doc .ms-alert__body ol {
+  margin-block: 8px;
+}
+
+.VPDoc .vp-doc .ms-alert a {
+  color: var(--ms-alert-accent);
+  text-decoration-color: color-mix(in srgb, var(--ms-alert-accent) 42%, transparent);
+}
+
+.VPDoc .vp-doc .ms-alert :not(pre) > code {
+  border-color: var(--ms-alert-border);
+  color: var(--ms-alert-accent);
+  background: var(--ms-alert-code);
+}
+
+.VPDoc .vp-doc .ms-alert div[class*='language-'],
+.VPDoc .vp-doc .ms-alert table {
+  max-width: 100%;
+  margin-block: 12px;
+}
+
+.VPDoc .vp-doc .ms-alert--note {
+  --ms-alert-accent: #1d4ed8;
+  --ms-alert-bg: #f3f7ff;
+  --ms-alert-border: #bfd1fa;
+  --ms-alert-code: #e5edff;
+}
+
+.VPDoc .vp-doc .ms-alert--tip {
+  --ms-alert-accent: #157347;
+  --ms-alert-bg: #f1faf5;
+  --ms-alert-border: #b9e4cc;
+  --ms-alert-code: #def3e7;
+}
+
+.VPDoc .vp-doc .ms-alert--important {
+  --ms-alert-accent: #6d28d9;
+  --ms-alert-bg: #f7f4ff;
+  --ms-alert-border: #d9cdf7;
+  --ms-alert-code: #eee7ff;
+}
+
+.VPDoc .vp-doc .ms-alert--warning {
+  --ms-alert-accent: #8a5a00;
+  --ms-alert-bg: #fff9e8;
+  --ms-alert-border: #efd58d;
+  --ms-alert-code: #f9edc8;
+}
+
+.VPDoc .vp-doc .ms-alert--caution {
+  --ms-alert-accent: #b42318;
+  --ms-alert-bg: #fff5f4;
+  --ms-alert-border: #efc5c1;
+  --ms-alert-code: #fbe4e1;
+}
+
+.dark .VPDoc .vp-doc .ms-alert--note {
+  --ms-alert-accent: #91b1ff;
+  --ms-alert-bg: #14213a;
+  --ms-alert-border: #34558d;
+  --ms-alert-code: #1a2b4c;
+}
+
+.dark .VPDoc .vp-doc .ms-alert--tip {
+  --ms-alert-accent: #73d7a1;
+  --ms-alert-bg: #122a24;
+  --ms-alert-border: #315f4c;
+  --ms-alert-code: #18372e;
+}
+
+.dark .VPDoc .vp-doc .ms-alert--important {
+  --ms-alert-accent: #c4a7ff;
+  --ms-alert-bg: #241c3b;
+  --ms-alert-border: #5b4787;
+  --ms-alert-code: #30264d;
+}
+
+.dark .VPDoc .vp-doc .ms-alert--warning {
+  --ms-alert-accent: #f4c85d;
+  --ms-alert-bg: #2d2615;
+  --ms-alert-border: #6c5926;
+  --ms-alert-code: #3a3019;
+}
+
+.dark .VPDoc .vp-doc .ms-alert--caution {
+  --ms-alert-accent: #ff9a93;
+  --ms-alert-bg: #321d22;
+  --ms-alert-border: #744047;
+  --ms-alert-code: #42262c;
+}
+
 .VPDoc .vp-doc div[class*='language-'] {
   margin: 24px 0;
   border: 1px solid var(--vp-c-divider);

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { configureMarkdownAlerts } from './markdownAlerts'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -10,7 +11,9 @@ export default defineConfig({
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css' }]
   ],
   markdown: {
-    math: true
+    math: true,
+    gfmAlerts: false,
+    config: configureMarkdownAlerts
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
