@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useData } from 'vitepress'
-import { ChevronDown, ChevronUp, ExternalLink } from '@lucide/vue'
+import { ChevronDown, ChevronUp, ExternalLink, SquarePen } from '@lucide/vue'
 import { data as contributorsByPath } from './contributors.data'
 
 const REPOSITORY = '131AIClub/MSforAI-docs'
@@ -16,7 +16,7 @@ interface Contributor {
   profileUrl?: string
 }
 
-const { page } = useData()
+const { page, frontmatter } = useData()
 const expanded = ref(false)
 const failedAvatars = ref<Record<string, boolean>>({})
 const contributors = computed<Contributor[]>(
@@ -26,6 +26,10 @@ const repositoryPath = computed(() => `docs/${page.value.relativePath}`)
 const historyUrl = computed(
   () =>
     `https://github.com/${REPOSITORY}/commits/${DEFAULT_BRANCH}/${encodeURI(repositoryPath.value)}`
+)
+const editUrl = computed(
+  () =>
+    `https://github.com/${REPOSITORY}/edit/${DEFAULT_BRANCH}/${encodeURI(repositoryPath.value)}`
 )
 const visibleContributors = computed(() =>
   expanded.value ? contributors.value : contributors.value.slice(0, INITIAL_COUNT)
@@ -51,7 +55,19 @@ watch(
 <template>
   <section class="article-contributors" aria-labelledby="contributors-title">
     <div class="article-end__heading">
-      <div id="contributors-title" role="heading" aria-level="2">本页贡献者</div>
+      <div class="article-end__title-row">
+        <div id="contributors-title" role="heading" aria-level="2">本页贡献者</div>
+        <a
+          v-if="frontmatter.editLink !== false"
+          class="article-end__edit-link"
+          :href="editUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <SquarePen :size="13" aria-hidden="true" />
+          在 GitHub 上编辑此页
+        </a>
+      </div>
       <div class="article-end__meta">
         <span v-if="contributors.length">{{ contributors.length }} 位</span>
         <a :href="historyUrl" target="_blank" rel="noopener noreferrer">

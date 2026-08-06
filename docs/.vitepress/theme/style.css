@@ -1317,6 +1317,28 @@ button {
   line-height: 1.4;
 }
 
+.article-end__title-row {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.article-end__edit-link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  color: var(--vp-c-brand-1);
+  font-size: 11px;
+  font-weight: 560;
+}
+
+.article-end__edit-link:hover {
+  color: var(--vp-c-brand-2);
+  text-decoration: none;
+}
+
 .article-end__meta {
   display: inline-flex;
   align-items: center;
@@ -1489,6 +1511,11 @@ a.contributor:hover {
 
   .article-end {
     margin-top: 56px;
+  }
+
+  .article-end__heading,
+  .article-end__title-row {
+    flex-wrap: wrap;
   }
 }
 
@@ -1937,6 +1964,10 @@ a.contributor:hover {
 }
 
 .chapter-reading-layout .VPDocFooter .last-updated {
+  display: none;
+}
+
+.chapter-reading-layout .VPDocFooter .edit-info {
   display: none;
 }
 
