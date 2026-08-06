@@ -1140,20 +1140,20 @@ a.contributor:hover {
 }
 
 @media (min-width: 1280px) {
-  .VPDoc .aside.left-aside {
-    padding-right: 32px;
+  .VPDoc .aside {
+    padding-left: 32px;
   }
 
-  html.reader-outline-hidden .VPDoc .aside.left-aside {
+  html.reader-outline-hidden .VPDoc .aside {
     display: block;
     width: 48px;
     max-width: 48px;
     flex: 0 0 48px;
-    padding-right: 16px;
+    padding-left: 16px;
   }
 
-  html.reader-outline-hidden .VPDoc .aside.left-aside .aside-container,
-  html.reader-outline-hidden .VPDoc .aside.left-aside .aside-content {
+  html.reader-outline-hidden .VPDoc .aside .aside-container,
+  html.reader-outline-hidden .VPDoc .aside .aside-content {
     width: 32px;
   }
 
@@ -1736,13 +1736,13 @@ a.contributor:hover {
     justify-content: center;
   }
 
-  .chapter-reading-layout .VPDoc .aside.left-aside {
+  .chapter-reading-layout .VPDoc .aside {
     position: relative;
     display: block;
     width: 204px;
     max-width: 204px;
     flex: 0 0 204px;
-    padding: 0 28px 0 0;
+    padding: 0 0 0 28px;
     transition: width 180ms ease, max-width 180ms ease, flex-basis 180ms ease;
   }
 
@@ -1756,7 +1756,7 @@ a.contributor:hover {
     position: absolute;
     top: calc(var(--vp-nav-height) + 8px);
     bottom: 32px;
-    left: 175px;
+    left: 28px;
     width: 1px;
     background: var(--vp-c-divider);
     content: '';
@@ -1771,12 +1771,12 @@ a.contributor:hover {
   .chapter-reading-layout .VPDoc .aside-content {
     width: 176px;
     min-height: calc(100vh - var(--vp-nav-height) - 32px);
-    padding: 0 18px 48px 0;
+    padding: 0 0 48px 18px;
     transition: width 180ms ease, padding 180ms ease;
   }
 
   .chapter-reading-layout .VPDoc .content {
-    order: 1;
+    order: 0;
     width: auto;
     min-width: 0;
     max-width: 884px !important;
@@ -1831,12 +1831,12 @@ a.contributor:hover {
     padding-left: 13px;
   }
 
-  html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside.left-aside {
+  html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside {
     display: block;
     width: 28px;
     max-width: 28px;
     flex: 0 0 28px;
-    padding-right: 0;
+    padding-left: 0;
   }
 
   html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside-container {
@@ -1844,7 +1844,7 @@ a.contributor:hover {
   }
 
   html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside-container::after {
-    left: 27px;
+    left: 0;
   }
 
   html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside-curtain {
@@ -1853,7 +1853,7 @@ a.contributor:hover {
 
   html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside-content {
     width: 28px;
-    padding-right: 0;
+    padding-left: 0;
   }
 
   html.reader-outline-hidden .chapter-reading-layout .VPDoc .aside .VPDocAsideOutline.has-outline {
@@ -1936,7 +1936,7 @@ a.contributor:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chapter-reading-layout .VPDoc .aside.left-aside,
+  .chapter-reading-layout .VPDoc .aside,
   .chapter-reading-layout .VPDoc .aside-container,
   .chapter-reading-layout .VPDoc .aside-content,
   .chapter-reading-layout .VPDoc .content,
@@ -2507,7 +2507,7 @@ html.chapter-sidebar-resizing * {
     display: none;
   }
 
-  .chapter-reading-layout .VPDoc .aside.left-aside,
+  .chapter-reading-layout .VPDoc .aside,
   .chapter-reading-layout .VPDoc .aside-container,
   .chapter-reading-layout .VPDoc .aside-content {
     transition: width 300ms ease, max-width 300ms ease, flex-basis 300ms ease, padding 300ms ease;
@@ -2519,8 +2519,9 @@ html.chapter-sidebar-resizing * {
       padding 300ms ease;
   }
 
-  .chapter-reading-layout .VPDoc .aside.left-aside {
+  .chapter-reading-layout .VPDoc .aside {
     align-self: stretch;
+    order: 1;
     width: var(--chapter-outline-space);
     max-width: var(--chapter-outline-space);
     flex-basis: var(--chapter-outline-space);
@@ -2537,8 +2538,7 @@ html.chapter-sidebar-resizing * {
   }
 
   .chapter-reading-layout .VPDoc .aside-container::after {
-    top: 0;
-    bottom: 0;
+    display: none;
   }
 
   .chapter-reading-layout .VPDoc .aside-curtain {
@@ -2557,11 +2557,11 @@ html.chapter-sidebar-resizing * {
     border-left: 0;
   }
 
-  html.reader-outline-compact .chapter-reading-layout .VPDoc .aside.left-aside {
+  html.reader-outline-compact .chapter-reading-layout .VPDoc .aside {
     width: var(--chapter-outline-compact-width);
     max-width: var(--chapter-outline-compact-width);
     flex-basis: var(--chapter-outline-compact-width);
-    padding-right: 0;
+    padding-left: 0;
   }
 
   html.reader-outline-compact .chapter-reading-layout .VPDoc .aside-container {
@@ -2572,7 +2572,7 @@ html.chapter-sidebar-resizing * {
   html.reader-outline-compact .chapter-reading-layout .VPDoc .aside-content {
     width: var(--chapter-outline-compact-width);
     min-height: calc(100vh - var(--vp-nav-height) - 32px);
-    padding-right: 0;
+    padding-left: 0;
     background: transparent;
     transform: translateX(0);
   }
@@ -2639,7 +2639,8 @@ html.chapter-sidebar-resizing * {
 
   html.reader-outline-compact .chapter-reading-layout .VPDocAsideOutline .outline-link.active::before {
     top: 8px;
-    left: -2px;
+    right: -4px;
+    left: auto;
     z-index: 1;
     width: 5px;
     height: 5px;
@@ -2675,7 +2676,7 @@ html.chapter-sidebar-resizing * {
   .chapter-navigation-toggle svg,
   .chapter-reading-layout .reader-control__icon,
   .chapter-reading-layout .reader-controls,
-  .chapter-reading-layout .VPDoc .aside.left-aside,
+  .chapter-reading-layout .VPDoc .aside,
   .chapter-reading-layout .VPDoc .aside-container,
   .chapter-reading-layout .VPDoc .aside-content {
     transition: none !important;

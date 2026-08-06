@@ -29,7 +29,7 @@ export default defineConfig({
       { text: '关于', link: '/about' }
     ],
 
-    aside: 'left',
+    aside: 'right',
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/131AIClub' }
