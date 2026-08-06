@@ -2,6 +2,14 @@
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
 
+@font-face {
+  font-family: 'JetBrainsMono Nerd Font';
+  src: url('/fonts/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 :root {
   --ms-ink: #172033;
   --ms-muted: #647084;
@@ -17,7 +25,7 @@
   --ms-secondary: #4b5563;
   --ms-display: 'Manrope Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --ms-body: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
-  --ms-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --ms-mono: 'JetBrainsMono Nerd Font', 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
   --ms-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   --vp-c-bg: var(--ms-paper);
@@ -886,10 +894,135 @@ button {
 }
 
 .VPDoc .vp-doc div[class*='language-'] {
+  --ms-code-toolbar-height: 44px;
+
   margin: 24px 0;
   border: 1px solid var(--vp-c-divider);
   border-radius: 6px;
   box-shadow: 0 12px 32px rgb(23 32 28 / 5%);
+  overflow: hidden;
+}
+
+.VPDoc .vp-doc .code-block-toolbar {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  display: grid;
+  height: var(--ms-code-toolbar-height);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 0 8px 0 14px;
+  color: var(--vp-c-text-2);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 78%, var(--vp-c-bg));
+  cursor: pointer;
+  font-family: var(--ms-mono);
+}
+
+.VPDoc .vp-doc .code-block-toolbar__mark {
+  color: var(--vp-c-brand-1);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.VPDoc .vp-doc .code-block-toolbar__label {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--vp-c-text-1);
+  font-size: 12px;
+  font-weight: 500;
+  justify-self: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+  user-select: text;
+}
+
+.VPDoc .vp-doc .code-block-toggle {
+  display: inline-flex;
+  height: 30px;
+  align-items: center;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 8px;
+  color: var(--vp-c-text-2);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--ms-body);
+  font-size: 11px;
+}
+
+.VPDoc .vp-doc .code-block-toggle:hover {
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-divider) 55%, transparent);
+}
+
+.VPDoc .vp-doc .code-block-toggle__icon {
+  display: inline-grid;
+  width: 14px;
+  place-items: center;
+  font-family: var(--ms-mono);
+  font-size: 15px;
+  line-height: 1;
+  transform: rotate(0deg);
+  transition: transform 180ms var(--ms-ease);
+}
+
+.VPDoc .vp-doc .code-block-toggle[aria-expanded='true'] .code-block-toggle__icon {
+  transform: rotate(180deg);
+}
+
+.VPDoc .vp-doc div[class*='language-'].is-collapsed > pre,
+.VPDoc .vp-doc div[class*='language-'].is-collapsed > .line-numbers-wrapper {
+  display: none;
+}
+
+.VPDoc .vp-doc div[class*='language-'].is-collapsed .code-block-toolbar {
+  border-bottom-color: transparent;
+}
+
+.VPDoc .vp-doc div[class*='language-'].line-numbers-mode {
+  padding-left: 42px;
+}
+
+.VPDoc .vp-doc div[class*='language-'].line-numbers-mode .code-block-toolbar {
+  margin-left: -42px;
+}
+
+.VPDoc .vp-doc .line-numbers-wrapper {
+  top: var(--ms-code-toolbar-height);
+  border-right-color: var(--vp-c-divider);
+  width: 42px;
+  padding-top: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.VPDoc .vp-doc div[class*='language-'] > button.copy {
+  top: calc(var(--ms-code-toolbar-height) + 12px);
+}
+
+.VPDoc .vp-doc div[class*='language-'] > span.lang {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .VPDoc .vp-doc div[class*='language-'] {
+    --ms-code-toolbar-height: 40px;
+  }
+
+  .VPDoc .vp-doc .code-block-toolbar {
+    gap: 7px;
+    padding-inline: 10px 6px;
+  }
+
+  .VPDoc .vp-doc .code-block-toolbar__mark {
+    display: none;
+  }
+
+  .VPDoc .vp-doc .code-block-toggle {
+    padding-inline: 5px;
+  }
 }
 
 .VPDoc .vp-doc :not(pre) > code {

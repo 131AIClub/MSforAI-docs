@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import ArticleEnd from './ArticleEnd.vue'
@@ -8,6 +8,7 @@ import ChapterSidebar from './ChapterSidebar.vue'
 import ChapterSidebarToggle from './ChapterSidebarToggle.vue'
 import DocumentContext from './DocumentContext.vue'
 import ReaderControls from './ReaderControls.vue'
+import { enhanceCodeBlocks } from './codeBlocks'
 
 const SIDEBAR_KEY = 'msforai:chapter-sidebar'
 const SIDEBAR_WIDTH_KEY = 'msforai:chapter-sidebar-width'
@@ -23,6 +24,7 @@ const viewportWidth = ref(1440)
 const layoutReady = ref(false)
 let storedSidebarState: string | null = null
 let layoutReadyFrame = 0
+let codeBlockObserver: MutationObserver | null = null
 
 const chapterSidebarOverlay = computed(() => viewportWidth.value < 1280)
 const layoutClasses = computed(() => ({
@@ -102,6 +104,9 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 onMounted(() => {
+  enhanceCodeBlocks()
+  codeBlockObserver = new MutationObserver(() => enhanceCodeBlocks())
+  codeBlockObserver.observe(document.body, { childList: true, subtree: true })
   readSidebarPreferences()
   syncSidebarToViewport()
   layoutReadyFrame = requestAnimationFrame(() => {
@@ -112,10 +117,13 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  codeBlockObserver?.disconnect()
   cancelAnimationFrame(layoutReadyFrame)
   window.removeEventListener('resize', syncSidebarToViewport)
   window.removeEventListener('keydown', handleKeydown)
 })
+
+watch(() => page.value.relativePath, () => requestAnimationFrame(() => enhanceCodeBlocks()))
 </script>
 
 <template>

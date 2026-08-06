@@ -1,6 +1,10 @@
 import { defineConfig } from 'vitepress'
 import { configureMarkdownAlerts } from './markdownAlerts'
 
+function escapeAttribute(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "MS for AI",
@@ -13,8 +17,25 @@ export default defineConfig({
   ],
   markdown: {
     math: true,
+    lineNumbers: true,
     gfmAlerts: false,
-    config: configureMarkdownAlerts
+    config(md) {
+      configureMarkdownAlerts(md)
+      const defaultFence = md.renderer.rules.fence ?? ((tokens, idx, options, _env, self) =>
+        self.renderToken(tokens, idx, options))
+
+      md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+        const token = tokens[idx]
+        const info = token.info.trim()
+        const title = info.match(/\[([^\]]+)\]/)?.[1]?.trim()
+        const html = defaultFence(tokens, idx, options, env, self)
+        if (!title) return html
+        return html.replace(
+          /<div class="language-([^" ]+)/,
+          `<div data-code-title="${escapeAttribute(title)}" class="language-$1`
+        )
+      }
+    }
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
