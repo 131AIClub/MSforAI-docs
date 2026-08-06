@@ -8,6 +8,7 @@ export default defineConfig({
   lang: 'zh-CN',
   lastUpdated: true,
   head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/icon.png' }],
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css' }]
   ],
   markdown: {
@@ -18,8 +19,8 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
-      src: '/mark.svg',
-      alt: 'MS for AI'
+      src: '/icon.png',
+      alt: 'QQ群 594740801 群头像'
     },
 
     nav: [
