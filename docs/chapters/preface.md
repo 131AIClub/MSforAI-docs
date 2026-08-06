@@ -1,3 +1,12 @@
+---
+title: "序章"
+order: 0
+index: "00"
+label: "ORIENTATION"
+description: "了解课程边界、学习方法与所需准备，为后续实践建立完整坐标。"
+courseEntry: true
+---
+
 # 序章
 
 本讲义是由 131AIClub（东南大学人工智能协会）开设的人工智能入门系列课程 MS for AI 配套讲义。
@@ -29,4 +38,3 @@ MS for AI，全称为“Missing Semester for Artificial Intelligence”，即“
 - 一点点计算机基础（最好是上过计算机通识课程，掌握基本程序设计思想，熟悉终端与命令行等）
 
 课程的作业最好还是自己完成一下。对于很多同学来说，解决问题的过程中培养的**自主解决问题的能力**其实才是最大的收获。
-

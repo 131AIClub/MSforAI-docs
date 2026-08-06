@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import ArticleEnd from './ArticleEnd.vue'
+import ChapterArticleDirectory from './ChapterArticleDirectory.vue'
 import ChapterNavigationList from './ChapterNavigationList.vue'
 import ChapterSidebar from './ChapterSidebar.vue'
 import ChapterSidebarToggle from './ChapterSidebarToggle.vue'
@@ -157,6 +158,7 @@ onBeforeUnmount(() => {
     </template>
 
     <template #doc-after>
+      <ChapterArticleDirectory v-if="isChapterPage" />
       <ArticleEnd v-if="isChapterPage" />
     </template>
   </DefaultTheme.Layout>

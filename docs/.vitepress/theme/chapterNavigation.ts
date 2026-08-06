@@ -1,27 +1,58 @@
-export interface ChapterNavItem {
+import { data } from './chapterNavigation.data'
+
+export interface CoursePageItem {
+  id: string
   text: string
   link: string
-  index?: string
+  index: string
+  order: number
+  label: string
+  description?: string
+  kind: 'standalone' | 'chapter' | 'article'
 }
 
-export const chapterNavigation: ChapterNavItem[] = [
-  { text: '序章', link: '/chapters/preface', index: '序' },
-  { text: '第一章 Overview', link: '/chapters/chapter1', index: '01' },
-  { text: '第二章 Python 基础', link: '/chapters/chapter2', index: '02' },
-  {
-    text: '第三章 NumPy，使用计算机进行线性代数计算',
-    link: '/chapters/chapter3',
-    index: '03'
-  },
-  {
-    text: '第四章 深度学习框架 PyTorch',
-    link: '/chapters/chapter4',
-    index: '04'
-  },
-  { text: '第五章 计算机视觉', link: '/chapters/chapter5', index: '05' },
-  {
-    text: '第九章 大语言模型 LLM',
-    link: '/chapters/chapter9',
-    index: '09'
-  }
-]
+export interface ArticleNavItem extends CoursePageItem {
+  kind: 'article'
+}
+
+export interface ChapterNavGroup extends CoursePageItem {
+  kind: 'chapter'
+  articles: ArticleNavItem[]
+}
+
+export interface CourseNavigationData {
+  entry?: CoursePageItem
+  standalone: CoursePageItem[]
+  chapters: ChapterNavGroup[]
+}
+
+export const courseNavigation = data
+export const chapterNavigation = data.chapters
+
+export function normalizeContentPath(path: string) {
+  return path.replace(/index(?:\.html)?$/, '').replace(/\.html$/, '').replace(/\/$/, '')
+}
+
+export function isCurrentRoute(path: string, link: string) {
+  return normalizeContentPath(path) === normalizeContentPath(link)
+}
+
+export function isChapterRoute(path: string, chapter: ChapterNavGroup) {
+  const currentPath = normalizeContentPath(path)
+  const chapterPath = normalizeContentPath(chapter.link)
+  return currentPath === chapterPath || currentPath.startsWith(`${chapterPath}/`)
+}
+
+export function findStandaloneByPath(path: string) {
+  return courseNavigation.standalone.find((page) => isCurrentRoute(path, page.link))
+}
+
+export function findChapterByPath(path: string) {
+  return chapterNavigation.find((chapter) => isChapterRoute(path, chapter))
+}
+
+export function findArticleByPath(path: string) {
+  const currentPath = normalizeContentPath(path)
+  const chapter = findChapterByPath(currentPath)
+  return chapter?.articles.find((article) => isCurrentRoute(currentPath, article.link))
+}

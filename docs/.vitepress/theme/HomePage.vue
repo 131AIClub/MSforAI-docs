@@ -1,76 +1,28 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { withBase } from 'vitepress'
 import {
   ArrowDown,
   ArrowRight,
   BookOpen,
-  Bot,
-  BrainCircuit,
-  Braces,
   ExternalLink,
   Layers3,
-  ScanEye,
-  TerminalSquare
 } from '@lucide/vue'
+import { courseNavigation } from './chapterNavigation'
 
-const modules = [
-  {
-    index: '00',
-    meta: 'ORIENTATION',
-    title: '课程序章',
-    outcome: '了解课程边界、学习方法与所需准备，为后续实践建立完整坐标。',
-    href: '/chapters/preface',
-    icon: BookOpen
-  },
-  {
-    index: '01',
-    meta: 'FIELD MAP',
-    title: 'AI Overview',
-    outcome: '理解 AI 的任务边界、发展脉络，以及神经网络如何表达与学习。',
-    href: '/chapters/chapter1',
-    icon: BrainCircuit
-  },
-  {
-    index: '02',
-    meta: 'TOOLING',
-    title: 'Python',
-    outcome: '掌握 Python 语法、开发环境与高效编程方式，准备好 AI 实践工具。',
-    href: '/chapters/chapter2',
-    icon: TerminalSquare
-  },
-  {
-    index: '03',
-    meta: 'COMPUTING',
-    title: 'NumPy',
-    outcome: '用数组表达向量与矩阵，理解批量计算如何连接数学和程序。',
-    href: '/chapters/chapter3',
-    icon: Braces
-  },
-  {
-    index: '04',
-    meta: 'FRAMEWORK',
-    title: 'PyTorch',
-    outcome: '完成张量计算、自动微分和训练循环，运行一个完整的学习系统。',
-    href: '/chapters/chapter4',
-    icon: Layers3
-  },
-  {
-    index: '05',
-    meta: 'PERCEPTION',
-    title: '计算机视觉',
-    outcome: '从卷积到图像分类，理解视觉模型如何提取并组合图像特征。',
-    href: '/chapters/chapter5',
-    icon: ScanEye
-  },
-  {
-    index: '09',
-    meta: 'GENERATIVE AI',
-    title: '大语言模型',
-    outcome: '建立 Transformer、训练与对齐的整体认识，读懂现代生成式 AI。',
-    href: '/chapters/chapter9',
-    icon: Bot
+const modules = computed(() => [
+  ...courseNavigation.standalone,
+  ...courseNavigation.chapters
+])
+const chapterCount = courseNavigation.chapters.length
+const courseEntryLink = computed(() => courseNavigation.entry?.link ?? '/')
+const pathSceneStyle = computed(() => {
+  const count = Math.max(modules.value.length, 1)
+  return {
+    '--course-path-height': `${Math.max(240, count * 70 + 30)}svh`,
+    '--course-path-height-mobile': `${Math.max(300, count * 80 + 20)}svh`
   }
-]
+})
 
 const pathScene = ref<HTMLElement | null>(null)
 const pathCardStage = ref<HTMLElement | null>(null)
@@ -79,7 +31,7 @@ const activeModule = ref(0)
 const pathPercent = ref(0)
 
 const currentCount = computed(() => String(activeModule.value + 1).padStart(2, '0'))
-const totalCount = String(modules.length).padStart(2, '0')
+const totalCount = computed(() => String(modules.value.length).padStart(2, '0'))
 
 let frameId = 0
 let resizeObserver: ResizeObserver | undefined
@@ -102,10 +54,11 @@ function updatePath(
   cardStageHeight: number
 ) {
   const element = pathScene.value
-  if (!element) return
+  const moduleCount = modules.value.length
+  if (!element || !moduleCount) return
 
-  const scaledProgress = progress * (modules.length - 1)
-  const nextActive = Math.min(modules.length - 1, Math.max(0, Math.floor(scaledProgress + 0.5)))
+  const scaledProgress = progress * Math.max(moduleCount - 1, 0)
+  const nextActive = Math.min(moduleCount - 1, Math.max(0, Math.floor(scaledProgress + 0.5)))
   const nextPercent = Math.round(progress * 100)
   element.style.setProperty('--path-progress-scale', `${progress}`)
 
@@ -223,7 +176,7 @@ onBeforeUnmount(() => {
               <span class="course-title-cn">人工智能缺失的一课</span>
             </h1>
             <div class="course-actions">
-              <a class="course-action course-action--primary" href="/chapters/preface">
+              <a class="course-action course-action--primary" :href="withBase(courseEntryLink)">
                 开始学习
                 <ArrowRight :size="18" :stroke-width="1.8" aria-hidden="true" />
               </a>
@@ -247,6 +200,7 @@ onBeforeUnmount(() => {
       ref="pathScene"
       class="course-path"
       :class="{ 'is-motion-ready': motionReady }"
+      :style="pathSceneStyle"
     >
       <div class="course-path__stage">
         <div class="course-shell course-path__inner">
@@ -255,7 +209,7 @@ onBeforeUnmount(() => {
               <p class="course-section-label">LEARNING PATH</p>
               <h2>课程学习路径</h2>
             </div>
-            <p>课程按工具、框架、计算机视觉与大语言模型组织，共七个章节。</p>
+            <p>当前包含 {{ chapterCount }} 个章节，内容按学习顺序排列。</p>
           </header>
 
           <div class="course-path__status">
@@ -283,8 +237,8 @@ onBeforeUnmount(() => {
               </span>
               <a
                 v-for="(module, index) in modules"
-                :key="module.index"
-                :href="module.href"
+                :key="module.link"
+                :href="withBase(module.link)"
                 class="course-rail__node"
                 :class="{
                   'is-active': index === activeModule,
@@ -293,14 +247,14 @@ onBeforeUnmount(() => {
                 :aria-current="index === activeModule ? 'step' : undefined"
               >
                 <span>{{ module.index }}</span>
-                <span>{{ module.title }}</span>
+                <span>{{ module.text }}</span>
               </a>
             </nav>
 
             <div ref="pathCardStage" class="course-module-stage">
               <article
                 v-for="(module, index) in modules"
-                :key="module.index"
+                :key="module.link"
                 class="course-module"
                 :class="{ 'is-active': index === activeModule }"
                 :aria-hidden="motionReady && index !== activeModule ? 'true' : undefined"
@@ -308,13 +262,14 @@ onBeforeUnmount(() => {
               >
                 <div class="course-module__topline">
                   <span class="course-module__index">{{ module.index }}</span>
-                  <component :is="module.icon" class="course-module__icon" :size="24" :stroke-width="1.5" aria-hidden="true" />
+                  <BookOpen v-if="module.kind === 'standalone'" class="course-module__icon" :size="24" :stroke-width="1.5" aria-hidden="true" />
+                  <Layers3 v-else class="course-module__icon" :size="24" :stroke-width="1.5" aria-hidden="true" />
                 </div>
-                <p class="course-module__meta">{{ module.meta }}</p>
-                <h3 class="course-module__name">{{ module.title }}</h3>
-                <p class="course-module__outcome">{{ module.outcome }}</p>
-                <a class="course-module__link" :href="module.href">
-                  进入本章
+                <p class="course-module__meta">{{ module.label }}</p>
+                <h3 class="course-module__name">{{ module.text }}</h3>
+                <p v-if="module.description" class="course-module__outcome">{{ module.description }}</p>
+                <a class="course-module__link" :href="withBase(module.link)">
+                  {{ module.kind === 'standalone' ? '阅读前言' : '进入本章' }}
                   <ArrowRight :size="18" :stroke-width="1.7" aria-hidden="true" />
                 </a>
               </article>

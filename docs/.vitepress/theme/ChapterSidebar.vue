@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount } from 'vue'
 import ChapterNavigationList from './ChapterNavigationList.vue'
+import { chapterNavigation } from './chapterNavigation'
 
 const props = defineProps<{
   open: boolean
@@ -98,7 +99,7 @@ onBeforeUnmount(() => {
   >
     <div class="chapter-sidebar__header">
       <span>课程讲义</span>
-      <span class="chapter-sidebar__count">7 章</span>
+      <span class="chapter-sidebar__count">{{ chapterNavigation.length }} 章</span>
     </div>
 
     <div class="chapter-sidebar__scroller">

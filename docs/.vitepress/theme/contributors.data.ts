@@ -111,6 +111,42 @@ function loadAuthors() {
   return JSON.parse(readFileSync(authorsPath, 'utf8')) as Record<string, CachedAuthor>
 }
 
+function stagedRenameSource(file: string) {
+  const repositoryPath = relative(repositoryRoot, file).split('\\').join('/')
+  const fields = runGit([
+    'diff',
+    '--cached',
+    '--name-status',
+    '--find-renames',
+    '-z'
+  ]).split('\0')
+
+  for (let index = 0; index < fields.length;) {
+    const status = fields[index++]
+    if (!status) continue
+    if (status.startsWith('R') || status.startsWith('C')) {
+      const source = fields[index++]
+      const destination = fields[index++]
+      if (destination === repositoryPath) return source
+    } else {
+      index += 1
+    }
+  }
+
+  return null
+}
+
+function fileHistory(file: string) {
+  const format = `--format=%an${fieldSeparator}%ae${fieldSeparator}%aI${fieldSeparator}%B${recordSeparator}`
+  const output = runGit(['log', '--follow', format, '--', file])
+  if (output.trim()) return output
+
+  const renameSource = stagedRenameSource(file)
+  return renameSource
+    ? runGit(['log', '--follow', format, '--', renameSource])
+    : output
+}
+
 export default defineLoader<ContributorsByPath>({
   watch: '../../chapters/**/*.md',
   async load(files) {
@@ -120,13 +156,7 @@ export default defineLoader<ContributorsByPath>({
 
     for (const file of files.sort()) {
       const relativePath = relative(resolve(repositoryRoot, 'docs'), file).split('\\').join('/')
-      const output = runGit([
-        'log',
-        '--follow',
-        `--format=%an${fieldSeparator}%ae${fieldSeparator}%aI${fieldSeparator}%B${recordSeparator}`,
-        '--',
-        file
-      ])
+      const output = fileHistory(file)
       const latestByKey = new Map<string, { participation: Participation; contributor: Contributor }>()
       for (const participation of parseParticipations(output)) {
         const contributor = displayContributor(participation.identity, authors)

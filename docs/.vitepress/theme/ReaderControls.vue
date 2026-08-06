@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronsLeft, ListTree } from '@lucide/vue'
+import { ChevronsRight, ListTree } from '@lucide/vue'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
 
@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
       @click="toggleOutline"
     >
       <span class="reader-control__icons" :class="{ 'is-compact': outlineCompact }" aria-hidden="true">
-        <ChevronsLeft class="reader-control__icon reader-control__icon--collapse" :size="18" :stroke-width="1.7" />
+        <ChevronsRight class="reader-control__icon reader-control__icon--collapse" :size="18" :stroke-width="1.7" />
         <ListTree class="reader-control__icon reader-control__icon--expand" :size="18" :stroke-width="1.7" />
       </span>
     </button>
