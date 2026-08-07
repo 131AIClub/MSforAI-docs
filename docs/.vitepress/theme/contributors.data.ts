@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineLoader } from 'vitepress'
+import { createContentLoader, type ContentData } from 'vitepress'
 
 interface CachedAuthor {
   name: string
@@ -35,6 +35,37 @@ const repositoryRoot = resolve(themeDirectory, '../../..')
 const authorsPath = resolve(themeDirectory, '../contributors.authors.json')
 const recordSeparator = '\u001e'
 const fieldSeparator = '\u001f'
+
+function metadataError(source: string, message: string): never {
+  throw new Error(`[贡献者] ${source}：${message}`)
+}
+
+function relativePathFromUrl(url: string) {
+  if (url.endsWith('/')) return `${url.replace(/^\//, '')}index.md`
+  return `${url.replace(/\.html$/, '').replace(/^\//, '')}.md`
+}
+
+function parseHistorical(frontmatter: Record<string, unknown>, source: string) {
+  const value = frontmatter.contributors
+  if (value == null) return []
+  if (!Array.isArray(value)) metadataError(source, 'contributors 必须是数组')
+  return value.map((entry, index) => {
+    if (typeof entry !== 'string' || !entry.trim()) {
+      metadataError(`${source} contributors[${index}]`, '必须是 GitHub 用户名（非空字符串）')
+    }
+    return entry.trim()
+  })
+}
+
+function displayHistorical(username: string): Contributor {
+  return {
+    key: `github:${username.toLowerCase()}`,
+    name: username,
+    githubUsername: username,
+    avatarUrl: `https://github.com/${encodeURIComponent(username)}.png?size=68`,
+    profileUrl: `https://github.com/${encodeURIComponent(username)}`
+  }
+}
 
 function runGit(args: string[]) {
   try {
@@ -147,15 +178,15 @@ function fileHistory(file: string) {
     : output
 }
 
-export default defineLoader<ContributorsByPath>({
-  watch: '../../chapters/**/*.md',
-  async load(files) {
+export default createContentLoader<ContributorsByPath>('chapters/**/*.md', {
+  transform(rawData: ContentData[]): ContributorsByPath {
     assertRepositoryHistory()
     const authors = loadAuthors()
     const result: ContributorsByPath = {}
 
-    for (const file of files.sort()) {
-      const relativePath = relative(resolve(repositoryRoot, 'docs'), file).split('\\').join('/')
+    for (const entry of rawData) {
+      const relativePath = relativePathFromUrl(entry.url)
+      const file = resolve(repositoryRoot, 'docs', relativePath)
       const output = fileHistory(file)
       const latestByKey = new Map<string, { participation: Participation; contributor: Contributor }>()
       for (const participation of parseParticipations(output)) {
@@ -165,6 +196,17 @@ export default defineLoader<ContributorsByPath>({
           latestByKey.set(contributor.key, { participation, contributor })
         }
       }
+
+      for (const username of parseHistorical(entry.frontmatter, relativePath)) {
+        const contributor = displayHistorical(username)
+        if (!latestByKey.has(contributor.key)) {
+          latestByKey.set(contributor.key, {
+            participation: { identity: { name: contributor.name, email: '' }, timestamp: '' },
+            contributor
+          })
+        }
+      }
+
       result[relativePath] = [...latestByKey.values()]
         .sort((a, b) => b.participation.timestamp.localeCompare(a.participation.timestamp))
         .map(({ contributor }) => contributor)
