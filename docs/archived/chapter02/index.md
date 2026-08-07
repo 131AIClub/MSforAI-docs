@@ -1,6 +1,6 @@
 ---
 title: "Python"
-order: 2
+order: 11
 index: "02"
 label: "PROGRAMMING！"
 description: "掌握 Python 语法、开发环境与高效编程方式"
