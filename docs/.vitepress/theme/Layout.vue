@@ -30,6 +30,7 @@ let storedSidebarState: string | null = null
 let layoutReadyFrame = 0
 let footerOffsetFrame = 0
 let codeBlockObserver: MutationObserver | null = null
+let contentSizeObserver: ResizeObserver | null = null
 let articleLoadTimer: ReturnType<typeof setTimeout> | null = null
 let activeArticleLoad: string | null = null
 let previousBeforePageLoad: Router['onBeforePageLoad']
@@ -98,6 +99,29 @@ function scheduleSidebarFooterOffsetSync() {
 function handleViewportChange() {
   syncSidebarToViewport()
   scheduleSidebarFooterOffsetSync()
+}
+
+function handleWheel(event: WheelEvent) {
+  const scroller = event.target instanceof Element
+    ? event.target.closest<HTMLElement>('.chapter-sidebar__scroller')
+    : null
+  if (!scroller || !chapterSidebarOpen.value) return
+
+  if (scroller.scrollHeight <= scroller.clientHeight + 1) return
+
+  const delta = event.deltaMode === 1 ? event.deltaY * 16
+    : event.deltaMode === 2 ? event.deltaY * scroller.clientHeight
+    : event.deltaY
+
+  const atTop = scroller.scrollTop <= 0
+  const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+  if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+    event.preventDefault()
+    return
+  }
+
+  event.preventDefault()
+  scroller.scrollTop += delta
 }
 
 function storeSidebarState() {
@@ -210,6 +234,8 @@ onMounted(() => {
   enhanceCodeBlocks()
   codeBlockObserver = new MutationObserver(() => enhanceCodeBlocks())
   codeBlockObserver.observe(document.body, { childList: true, subtree: true })
+  contentSizeObserver = new ResizeObserver(() => scheduleSidebarFooterOffsetSync())
+  contentSizeObserver.observe(document.body)
   readSidebarPreferences()
   syncSidebarToViewport()
   syncSidebarFooterOffset()
@@ -219,16 +245,19 @@ onMounted(() => {
   window.addEventListener('resize', handleViewportChange, { passive: true })
   window.addEventListener('scroll', scheduleSidebarFooterOffsetSync, { passive: true })
   window.addEventListener('keydown', handleKeydown)
+  document.addEventListener('wheel', handleWheel, { passive: false })
 })
 
 onBeforeUnmount(() => {
   removeArticleLoadingHooks()
   codeBlockObserver?.disconnect()
+  contentSizeObserver?.disconnect()
   cancelAnimationFrame(layoutReadyFrame)
   cancelAnimationFrame(footerOffsetFrame)
   window.removeEventListener('resize', handleViewportChange)
   window.removeEventListener('scroll', scheduleSidebarFooterOffsetSync)
   window.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('wheel', handleWheel)
 })
 
 watch(() => page.value.relativePath, () => requestAnimationFrame(() => {

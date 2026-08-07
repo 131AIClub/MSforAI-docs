@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronRight } from '@lucide/vue'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, withBase } from 'vitepress'
 import {
   chapterNavigation,
@@ -22,6 +22,7 @@ const emit = defineEmits<{
 const route = useRoute()
 const expandedChapters = ref(new Set<string>())
 const currentPath = computed(() => normalizeContentPath(route.path))
+const navRef = ref<HTMLElement | null>(null)
 
 function isCurrent(link: string) {
   return isCurrentRoute(currentPath.value, link)
@@ -39,6 +40,14 @@ function toggleChapter(chapterLink: string) {
     nextExpandedChapters.add(chapterLink)
   }
   expandedChapters.value = nextExpandedChapters
+  scrollActiveIntoView()
+}
+
+function scrollActiveIntoView() {
+  nextTick(() => {
+    const activeEl = navRef.value?.querySelector('.is-current, [aria-current="page"]')
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  })
 }
 
 watch(
@@ -48,6 +57,7 @@ watch(
     if (activeChapter?.articles.length) {
       expandedChapters.value = new Set([...expandedChapters.value, activeChapter.link])
     }
+    scrollActiveIntoView()
   },
   { immediate: true }
 )
@@ -55,6 +65,7 @@ watch(
 
 <template>
   <nav
+    ref="navRef"
     class="chapter-navigation-list"
     :class="{ 'chapter-navigation-list--compact': compact }"
     aria-label="讲义章节"
