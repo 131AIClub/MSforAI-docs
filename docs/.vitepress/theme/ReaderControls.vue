@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ChevronsRight, ListTree } from '@lucide/vue'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useData } from 'vitepress'
+import { onContentUpdated, useData } from 'vitepress'
 
 const OUTLINE_KEY = 'msforai:reader-outline'
 
@@ -68,6 +68,10 @@ function toggleOutline() {
   storeState()
   applyLayoutState()
 }
+
+onContentUpdated(() => {
+  updateAvailability()
+})
 
 watch(
   () => page.value.relativePath,

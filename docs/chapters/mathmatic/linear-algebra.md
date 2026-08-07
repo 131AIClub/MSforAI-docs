@@ -1,8 +1,6 @@
 ---
 title: "线性代数"
 order: 1
-contributors:
-  - "Gianthard-cyh"
 ---
 # 线性代数
 

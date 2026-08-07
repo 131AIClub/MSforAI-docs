@@ -62,7 +62,7 @@ function displayHistorical(username: string): Contributor {
     key: `github:${username.toLowerCase()}`,
     name: username,
     githubUsername: username,
-    avatarUrl: `https://github.com/${encodeURIComponent(username)}.png?size=68`,
+    avatarUrl: `https://avatars.githubusercontent.com/${encodeURIComponent(username)}?size=68`,
     profileUrl: `https://github.com/${encodeURIComponent(username)}`
   }
 }
@@ -131,7 +131,7 @@ function displayContributor(identity: Identity, authors: Record<string, CachedAu
     ...(githubUsername
       ? {
           githubUsername,
-          avatarUrl: `https://github.com/${encodeURIComponent(githubUsername)}.png?size=68`,
+          avatarUrl: `https://avatars.githubusercontent.com/${encodeURIComponent(githubUsername)}?size=68`,
           profileUrl: `https://github.com/${encodeURIComponent(githubUsername)}`
         }
       : {})
