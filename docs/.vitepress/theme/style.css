@@ -2713,13 +2713,16 @@ html.chapter-sidebar-resizing * {
 }
 
 .chapter-reading-layout .reader-controls {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   width: var(--chapter-outline-width);
   min-height: 40px;
   align-items: center;
   margin: 0;
   pointer-events: auto;
+  background: var(--vp-c-bg);
   transition: width 300ms ease;
 }
 
@@ -2826,9 +2829,11 @@ html.chapter-sidebar-resizing * {
     top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 32px);
     width: var(--chapter-outline-space);
     height: auto;
-    max-height: none;
+    max-height: calc(100vh - var(--vp-nav-height) - var(--vp-layout-top-height, 0px) - 32px);
     padding-top: 0;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .chapter-reading-layout .VPDoc .aside-container::after {
@@ -2860,7 +2865,8 @@ html.chapter-sidebar-resizing * {
 
   html.reader-outline-compact .chapter-reading-layout .VPDoc .aside-container {
     width: var(--chapter-outline-compact-width) !important;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   html.reader-outline-compact .chapter-reading-layout .VPDoc .aside-content {
