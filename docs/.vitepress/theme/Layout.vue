@@ -9,6 +9,7 @@ import ChapterSidebarToggle from './ChapterSidebarToggle.vue'
 import DocumentContext from './DocumentContext.vue'
 import ReaderControls from './ReaderControls.vue'
 import { enhanceCodeBlocks } from './codeBlocks'
+import { useOutlineFollow } from './outlineFollow'
 
 const SIDEBAR_KEY = 'msforai:chapter-sidebar'
 const SIDEBAR_WIDTH_KEY = 'msforai:chapter-sidebar-width'
@@ -41,6 +42,7 @@ let installedAfterPageLoad: Router['onAfterPageLoad']
 let installedAfterRouteChange: Router['onAfterRouteChange']
 
 const chapterSidebarOverlay = computed(() => viewportWidth.value < 1280)
+useOutlineFollow()
 const layoutClasses = computed(() => ({
   'chapter-reading-layout': isChapterPage.value,
   'chapter-sidebar-open': isChapterPage.value && chapterSidebarOpen.value,
