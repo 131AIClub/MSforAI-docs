@@ -19,8 +19,11 @@ const courseEntryLink = computed(() => courseNavigation.entry?.link ?? '/')
 const pathSceneStyle = computed(() => {
   const count = Math.max(modules.value.length, 1)
   return {
+    '--course-module-count': `${count}`,
     '--course-path-height': `${Math.max(240, count * 70 + 30)}svh`,
-    '--course-path-height-mobile': `${Math.max(300, count * 80 + 20)}svh`
+    '--course-path-height-mobile': `${Math.max(300, count * 80 + 20)}svh`,
+    '--course-path-min-height': `${count * 471}px`,
+    '--course-path-min-height-mobile': `${count * 557}px`
   }
 })
 

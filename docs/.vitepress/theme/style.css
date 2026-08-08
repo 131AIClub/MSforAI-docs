@@ -3016,7 +3016,7 @@ html.chapter-sidebar-resizing * {
 
 .course-module-stage {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   border-top: 1px solid #334760;
   border-left: 1px solid #334760;
 }
@@ -3077,7 +3077,7 @@ html.chapter-sidebar-resizing * {
 
 .course-path.is-motion-ready {
   height: var(--course-path-height, 520svh);
-  min-height: 3300px;
+  min-height: var(--course-path-min-height, 3300px);
   padding: 0;
   overflow: visible;
 }
@@ -3169,7 +3169,7 @@ html.chapter-sidebar-resizing * {
   position: relative;
   display: grid;
   align-content: stretch;
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(var(--course-module-count, 7), minmax(0, 1fr));
   padding-left: 28px;
 }
 
@@ -3315,7 +3315,7 @@ html.chapter-sidebar-resizing * {
 
   .course-path.is-motion-ready {
     height: var(--course-path-height-mobile, 580svh);
-    min-height: 3900px;
+    min-height: var(--course-path-min-height-mobile, 3900px);
   }
 
   .course-path.is-motion-ready .course-path__stage {
