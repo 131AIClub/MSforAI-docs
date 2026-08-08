@@ -267,7 +267,7 @@ cat ~/.ssh/id_ed25519.pub
 
 ![](github_ssh_key_setup.png)
 
-点击 “Add SSH Key” 并验证通过后。
+点击 “Add SSH Key” 并验证通过。
 
 如果配置完成后，运行
 
