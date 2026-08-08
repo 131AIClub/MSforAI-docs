@@ -4,6 +4,7 @@ import { useData } from 'vitepress'
 
 const { isDark, page } = useData()
 const giscusRoot = ref<HTMLElement>()
+let frameObserver: MutationObserver | null = null
 
 const config = {
   repo: import.meta.env.VITE_GISCUS_REPO,
@@ -24,6 +25,20 @@ function updateTheme() {
     },
     'https://giscus.app'
   )
+}
+
+function observeFrame() {
+  frameObserver?.disconnect()
+  const root = giscusRoot.value
+  if (!root) return
+  frameObserver = new MutationObserver(() => {
+    const frame = root.querySelector<HTMLIFrameElement>('.giscus-frame')
+    if (!frame) return
+    frameObserver?.disconnect()
+    frame.addEventListener('load', updateTheme, { once: true })
+    updateTheme()
+  })
+  frameObserver.observe(root, { childList: true, subtree: true })
 }
 
 async function renderGiscus() {
@@ -49,6 +64,7 @@ async function renderGiscus() {
   script.setAttribute('data-lang', 'zh-CN')
   script.setAttribute('data-loading', 'lazy')
   giscusRoot.value.append(script)
+  observeFrame()
 }
 
 watch(isDark, updateTheme)
@@ -58,7 +74,10 @@ watch(
 )
 
 onMounted(renderGiscus)
-onBeforeUnmount(() => giscusRoot.value?.replaceChildren())
+onBeforeUnmount(() => {
+  frameObserver?.disconnect()
+  giscusRoot.value?.replaceChildren()
+})
 </script>
 
 <template>
