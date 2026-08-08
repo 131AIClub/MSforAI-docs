@@ -1115,9 +1115,6 @@ button {
 .VPDoc .vp-doc img {
   max-height: 680px;
   margin: 28px auto;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  background: #fff;
 }
 
 .VPDocAsideOutline .outline-title {

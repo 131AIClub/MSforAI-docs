@@ -4,6 +4,8 @@ order: 1
 ---
 # 线性代数
 
+线性代数是**研究向量空间、矩阵和线性方程组的数学分支**。在 MS for AI 中，我们不讨论有关**空间、方程组**的内容，主要关心线性代数中的**基本运算**，即加、减、乘、除等基本内容。
+
 ## 向量与矩阵
 
 ### 向量
@@ -152,14 +154,86 @@ $$
 其中 $\mathbf{x}\in\mathbb{R}^m$、$\mathbf{y}\in\mathbb{R}^n$、$\mathbf{x}\otimes\mathbf{y}\in\mathbb{R}^{m\times n}$。
 ### 矩阵乘法
 
-矩阵乘法是非常重要的算术，它的计算方式与我们过去所使用的标量算术有很大不同。我们将通过一个更加实际的例子来讲解矩阵乘法。
+**矩阵乘法**是非常重要的算术，它的计算方式与我们过去所使用的标量算术有很大不同。我们将通过一个更加实际的例子来讲解矩阵乘法。
 
-定义两个矩阵 $\mathbf{X}\in\mathbb{R}^{m\times n}$、$\mathbf{Y}\in\mathbb{R}^{n\times k}$。注意，矩阵乘法中，第一个矩阵的列数与第二个矩阵的行数**必须相等**，否则这两个矩阵是**不能进行矩阵乘法**的。
+定义两个矩阵 $\mathbf{X}\in\mathbb{R}^{m\times n}$、$\mathbf{Y}\in\mathbb{R}^{n\times k}$。注意，矩阵乘法中，第一个矩阵的列数与第二个矩阵的行数**必须相等**，否则这两个矩阵是**不能进行矩阵乘法**的。而矩阵乘法的结果 $\mathbf{Z}$ 是一个 $m$ 行 $k$ 列的矩阵：
 
+$$
+\mathbf{Z} = \mathbf{XY}\in\mathbb{R}^{m\times k}
+$$
 
+矩阵 $\mathbf{Z}$ 中的每个元素，通过下式计算得到：
+$$
+z_{ij} = \sum_{p=1}^n x_{ip}y_{pj} = \mathbf{x}_i^\top \cdot \mathbf{y}_j
+$$
+即结果矩阵 $\mathbf{Z}$ 中第 $i$ 行第 $j$ 列的值，等于矩阵 $\mathbf{X}$ 第 $i$ 行向量与矩阵 $\mathbf{Y}$ 第 $j$ 列向量的内积。
+> [!NOTE]
+> 这里 $\mathbf{x}_i$ 需要进行转置的原因是，在我们的语境下 $\mathbf{x}_i$ 是行向量，而向量内积必须是两个形状一样的向量。因此这里将 $\mathbf{x}_i$ 转置为 $\mathbf{x}_i^\top$ 变为列向量，才能与 $\mathbf{y}_j$ 做内积。
+
+以下是矩阵乘法的示意图：
+
+<ThemedImage src="/static/mathmatic/matmul.svg" dark="/static/mathmatic/matmul-dark.svg" alt="矩阵乘法示意" />
+
+图中以 $\mathbf{X}\in\mathbb{R}^{3\times 4}$、$\mathbf{Y}\in\mathbb{R}^{4\times 3}$ 为例，展示了计算 $\mathbf{Z}$ 矩阵第 $1$ 行第 $2$ 列数值的过程。
+
+如果将向量视作行或列为 1 的**特殊矩阵**，那么矩阵乘法还可以用来统一表示向量的内积与外积：
+$$
+\begin{aligned}
+\mathbf{x}\cdot\mathbf{y} &= \mathbf{x}^\top\mathbf{y} \\
+\mathbf{x}\otimes\mathbf{y} &= \mathbf{x}\mathbf{y}^\top
+\end{aligned}
+$$
+向量是特殊的矩阵，所以向量也是可以和矩阵做矩阵乘法的，只需要将向量看作是 $1$ 行 $n$ 列的矩阵，或者是 $n$ 行 $1$ 列的矩阵即可（取决于是行向量还是列向量）。
 ### 逆
+
+首先我们需要先引入**单位矩阵**的概念。单位矩阵指矩阵对角线的值全为 $1$ ，其它位置全为 $0$ 的方阵（方阵就是行数列数相等的矩阵），用符号 $\mathbf{I}$ 或 $\mathbf{E}$ 表示：
+$$
+\mathbf{I} = \begin{pmatrix}
+1 & 0 & 0 & \cdots & 0 \\
+0 & 1 & 0 & \cdots & 0 \\
+0 & 0 & 1 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & 1
+\end{pmatrix}
+$$
+
+本讲义统一使用 $\mathbf{I}$ 来表示单位矩阵。不难发现，单位矩阵与可以进行矩阵乘法的矩阵相乘都是原来的矩阵，它的地位类似标量运算中的 $1$ ：
+$$
+\begin{aligned}
+\mathbf{XI} &= \mathbf{X} \\
+\mathbf{IY} &= \mathbf{Y}
+\end{aligned}
+$$
+
+矩阵的**逆矩阵**定义为，相乘后可以得到单位矩阵 $\mathbf{I}$ 的那个矩阵。通过在右上标注 $-1$ 来表示：
+$$
+\mathbf{XX}^{-1} = \mathbf{X}^{-1}\mathbf{X} = \mathbf{I}
+$$
+逆的地位和标量运算中的**倒数**类似。
 
 ### 范数
 
+在这里我们介绍三种范数：**$L_1$ 范数、 $L_2$ 范数与 Frobenius 范数**。范数使用 $||$ 包围向量或矩阵来表示，例如 $||\mathbf{x}||_n$ 表示 $\mathbf{x}$ 的 $L_n$ 范数，$||\mathbf{X}||_{\text{Frob}}$ 表示矩阵的 Frobenius 范数。
 
+$L_1$ 范数定义为**向量所有元素的绝对值之和**：
+$$
+||\mathbf{x}||_1 = \sum_{i=1}^n |x_i|
+$$
+
+$L_2$ 范数定义为**向量所有元素的平方和的平方根**：
+$$
+||\mathbf{x}||_2 = \sqrt{\sum_{i=1}^n x_i^2}
+$$
+
+$L_2$ 范数实际上就是向量的长度。
+
+以此类推，$L_p$ 范数定义为：
+$$
+||\mathbf{x}||_p = (\sum_{i=1}^n x_i^p)^{\frac{1}{p}}
+$$
+
+Frobenius 范数定义为**矩阵所有元素平方和的平方根**：
+$$
+||\mathbf{X}||_{\text{Frob}} = \sqrt{\sum_{ij} x_{ij}^2}
+$$
 
