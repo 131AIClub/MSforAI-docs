@@ -954,6 +954,89 @@ button {
   --ms-alert-code: #42262c;
 }
 
+/* Collapsible blocks: a contained panel offset from the page, so the summary
+   reads as a control and the body reads as nested content rather than as
+   ordinary prose that happens to start lower down. */
+.VPDoc .vp-doc details {
+  --ms-details-indent: 16px;
+
+  margin: 24px 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  /* The body indent comes from the container, not from each child, so that
+     children carrying their own padding (code blocks) still align with the
+     paragraphs. The summary is pulled back out of it below. */
+  padding: 12px 16px 12px calc(16px + var(--ms-details-indent));
+  background: var(--vp-c-bg-soft);
+}
+
+.VPDoc .vp-doc details > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 0 calc(-1 * var(--ms-details-indent));
+  color: var(--ms-heading);
+  cursor: pointer;
+  font-family: var(--ms-display);
+  font-size: 14px;
+  font-weight: 720;
+  line-height: 1.5;
+  list-style: none;
+  transition: color 0.18s var(--ms-ease);
+}
+
+.VPDoc .vp-doc details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Chevron: points right when closed, down when open. */
+.VPDoc .vp-doc details > summary::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--vp-c-brand-1);
+  border-bottom: 2px solid var(--vp-c-brand-1);
+  transform: rotate(-45deg);
+  transition: transform 0.2s var(--ms-ease);
+}
+
+.VPDoc .vp-doc details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.VPDoc .vp-doc details > summary:hover {
+  color: var(--vp-c-brand-1);
+}
+
+.VPDoc .vp-doc details[open] > summary {
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding-bottom: 10px;
+}
+
+/* The body's outer margins would double up on the panel padding. The extra
+   selectors exist to outrank the reading layout's own per-element margins,
+   which are set at a higher specificity for code blocks and tables. */
+.VPDoc .vp-doc details[open] > summary + *,
+.VPDoc .vp-doc details[open] > summary + div[class*='language-'],
+.VPDoc .vp-doc details[open] > summary + table {
+  margin-top: 0;
+}
+
+.VPDoc .vp-doc details[open] > :last-child,
+.VPDoc .vp-doc details[open] > div[class*='language-']:last-child,
+.VPDoc .vp-doc details[open] > table:last-child {
+  margin-bottom: 0;
+}
+
+/* A blockquote's own fill is the same token as the panel, which would make it
+   disappear inside one. Drop it back to the page colour to keep the contrast. */
+.VPDoc .vp-doc details[open] blockquote {
+  background: var(--vp-c-bg);
+}
+
+
 .VPDoc .vp-doc div[class*='language-'] {
   --ms-code-toolbar-height: 44px;
 
