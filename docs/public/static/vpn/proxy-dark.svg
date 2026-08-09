@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" role="img" aria-label="代理工作原理示意图">
+  <defs>
+    <pattern id="wallHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#ff8a8a" stroke-opacity="0.45" stroke-width="2" />
+    </pattern>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#78a3ff" />
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff8a8a" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4fd1a5" />
+    </marker>
+    <marker id="arrowMuted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#aab7ca" />
+    </marker>
+  </defs>
+
+  <g font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif">
+    <!-- 区域底色 -->
+    <rect x="4" y="44" width="432" height="396" rx="14" fill="#17243a" />
+    <rect x="474" y="44" width="422" height="396" rx="14" fill="#17243a" />
+    <text x="22" y="70" font-size="13" fill="#aab7ca">国内网络</text>
+    <text x="490" y="70" font-size="13" fill="#aab7ca">境外网络</text>
+
+    <!-- 墙 -->
+    <rect x="440" y="40" width="30" height="414" rx="6" fill="url(#wallHatch)" stroke="#ff8a8a" stroke-width="1.5" stroke-dasharray="6 4" />
+    <rect x="382" y="6" width="146" height="28" rx="14" fill="#0f1726" stroke="#ff8a8a" stroke-width="1.5" stroke-dasharray="6 4" />
+    <text x="455" y="25" text-anchor="middle" font-size="13" fill="#ff8a8a">墙（审查设备）</text>
+
+    <!-- 你的电脑 -->
+    <rect x="24" y="110" width="246" height="214" rx="14" fill="#1c2c46" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="42" y="136" font-size="14" font-weight="600" fill="#edf3ff">你的电脑</text>
+
+    <rect x="42" y="148" width="210" height="56" rx="10" fill="#17243a" stroke="#2b3b55" />
+    <text x="147" y="173" text-anchor="middle" font-size="13.5" fill="#edf3ff">浏览器 / 终端 / pip</text>
+    <text x="147" y="191" text-anchor="middle" font-size="11.5" fill="#aab7ca">真正发起请求的程序</text>
+
+    <line x1="147" y1="204" x2="147" y2="214" stroke="#aab7ca" stroke-width="1.5" marker-end="url(#arrowMuted)" />
+
+    <rect x="42" y="220" width="210" height="86" rx="10" fill="#78a3ff" fill-opacity="0.16" stroke="#78a3ff" stroke-width="1.5" />
+    <text x="147" y="247" text-anchor="middle" font-size="14" font-weight="600" fill="#78a3ff">代理客户端</text>
+    <text x="147" y="269" text-anchor="middle" font-size="11.5" fill="#aab7ca">逐个请求判断：</text>
+    <text x="147" y="288" text-anchor="middle" font-size="11.5" fill="#aab7ca">走隧道，还是直连</text>
+
+    <!-- ① 不开代理 -->
+    <text x="278" y="160" font-size="12.5" font-weight="600" fill="#ff8a8a">① 不开代理，直接连境外</text>
+    <line x1="272" y1="176" x2="432" y2="176" stroke="#ff8a8a" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#arrowRed)" />
+    <text x="278" y="198" font-size="11.5" fill="#aab7ca">连接被重置 / 一直转圈</text>
+    <circle cx="455" cy="176" r="11" fill="#0f1726" stroke="#ff8a8a" stroke-width="1.5" />
+    <path d="M 450 171 L 460 181 M 460 171 L 450 181" stroke="#ff8a8a" stroke-width="2" stroke-linecap="round" />
+
+    <!-- ② 走代理：隧道穿墙 -->
+    <text x="276" y="238" font-size="12.5" font-weight="600" fill="#78a3ff">② 开了代理：一条加密隧道</text>
+    <rect x="436" y="244" width="38" height="38" fill="#0f1726" />
+    <rect x="272" y="246" width="272" height="34" rx="17" fill="#78a3ff" fill-opacity="0.2" stroke="#78a3ff" stroke-width="1.5" />
+    <line x1="286" y1="263" x2="530" y2="263" stroke="#78a3ff" stroke-width="2" marker-end="url(#arrowBlue)" />
+    <text x="276" y="302" font-size="11.5" fill="#aab7ca">墙看不出你在访问什么</text>
+
+    <rect x="546" y="228" width="150" height="70" rx="12" fill="#1c2c46" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="621" y="256" text-anchor="middle" font-size="14" font-weight="600" fill="#edf3ff">境外节点</text>
+    <text x="621" y="278" text-anchor="middle" font-size="11.5" fill="#aab7ca">一台在墙外的服务器</text>
+    <text x="621" y="320" text-anchor="middle" font-size="11.5" fill="#aab7ca">它用自己的 IP 替你访问</text>
+
+    <line x1="698" y1="263" x2="728" y2="263" stroke="#78a3ff" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+    <rect x="736" y="214" width="148" height="98" rx="12" fill="#1c2c46" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="810" y="240" text-anchor="middle" font-size="14" font-weight="600" fill="#edf3ff">目标站点</text>
+    <text x="810" y="264" text-anchor="middle" font-size="12" fill="#aab7ca" font-family="'IBM Plex Mono',Consolas,monospace">github.com</text>
+    <text x="810" y="283" text-anchor="middle" font-size="12" fill="#aab7ca" font-family="'IBM Plex Mono',Consolas,monospace">claude.ai</text>
+    <text x="810" y="302" text-anchor="middle" font-size="12" fill="#aab7ca" font-family="'IBM Plex Mono',Consolas,monospace">pypi.org</text>
+
+    <!-- ③ 国内流量直连 -->
+    <text x="162" y="348" font-size="12.5" font-weight="600" fill="#4fd1a5">③ 国内流量按规则直连</text>
+    <path d="M 147 324 L 147 384 L 292 384" fill="none" stroke="#4fd1a5" stroke-width="1.8" marker-end="url(#arrowGreen)" />
+    <rect x="300" y="354" width="134" height="60" rx="12" fill="#1c2c46" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="367" y="379" text-anchor="middle" font-size="13.5" font-weight="600" fill="#edf3ff">国内站点</text>
+    <text x="367" y="399" text-anchor="middle" font-size="11.5" fill="#aab7ca">B 站 / 知乎 / 镜像源</text>
+
+    <!-- 分流模式 -->
+    <line x1="24" y1="456" x2="876" y2="456" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="24" y="474" font-size="12.5" fill="#aab7ca">分流模式：客户端里那个下拉框，选的就是上面几条线各自怎么走</text>
+
+    <rect x="24" y="486" width="272" height="60" rx="10" fill="#78a3ff" fill-opacity="0.16" stroke="#78a3ff" stroke-width="1.5" />
+    <text x="40" y="512" font-size="13.5" font-weight="600" fill="#78a3ff">规则（默认，推荐）</text>
+    <text x="40" y="532" font-size="11.5" fill="#aab7ca">境外走 ②，国内走 ③</text>
+
+    <rect x="314" y="486" width="272" height="60" rx="10" fill="#17243a" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="330" y="512" font-size="13.5" font-weight="600" fill="#edf3ff">全局</text>
+    <text x="330" y="532" font-size="11.5" fill="#aab7ca">②③ 全都塞进隧道，国内站点反而变慢</text>
+
+    <rect x="604" y="486" width="272" height="60" rx="10" fill="#17243a" stroke="#2b3b55" stroke-width="1.5" />
+    <text x="620" y="512" font-size="13.5" font-weight="600" fill="#edf3ff">直连</text>
+    <text x="620" y="532" font-size="11.5" fill="#aab7ca">全都变成 ①，等于没开</text>
+  </g>
+</svg>
