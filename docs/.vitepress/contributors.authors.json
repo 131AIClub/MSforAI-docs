@@ -12,7 +12,9 @@
     "githubUsername": "github-actions[bot]"
   },
   "noreply@anthropic.com": {
-    "name": "Claude Opus 5"
+    "name": "Claude Opus 5",
+    "avatarUrl": "/static/contributors/claude.svg",
+    "profileUrl": "https://claude.ai"
   },
   "ssmzhn@163.com": {
     "name": "SakiMidare",

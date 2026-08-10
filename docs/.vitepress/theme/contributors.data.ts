@@ -8,6 +8,8 @@ import { createContentLoader, type ContentData } from 'vitepress'
 interface CachedAuthor {
   name: string
   githubUsername?: string
+  avatarUrl?: string
+  profileUrl?: string
 }
 
 interface Contributor {
@@ -134,7 +136,9 @@ function displayContributor(identity: Identity, authors: Record<string, CachedAu
           avatarUrl: `https://avatars.githubusercontent.com/${encodeURIComponent(githubUsername)}?size=68`,
           profileUrl: `https://github.com/${encodeURIComponent(githubUsername)}`
         }
-      : {})
+      : {}),
+    ...(cached?.avatarUrl ? { avatarUrl: cached.avatarUrl } : {}),
+    ...(cached?.profileUrl ? { profileUrl: cached.profileUrl } : {})
   } satisfies Contributor
 }
 

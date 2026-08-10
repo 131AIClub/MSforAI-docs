@@ -30,7 +30,11 @@ function updateIdentity(emailValue, nameValue, loginValue) {
   const name = nameValue.trim()
   if (!email || !name) return
   const githubUsername = loginValue || noreplyLogin(email) || cache[email]?.githubUsername
-  cache[email] = githubUsername ? { name, githubUsername } : { name }
+  const previous = cache[email] || {}
+  const next = { ...previous, name }
+  if (githubUsername) next.githubUsername = githubUsername
+  else delete next.githubUsername
+  cache[email] = next
 }
 
 function updateCoAuthors(message) {
