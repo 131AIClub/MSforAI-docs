@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 600" width="420" height="600" role="img" aria-label="机场套餐卡片示例：巨量不限时流量包，包含流量 260 GB，不限时永久流量用完 260G 为止，额外的优化线路与进阶系列节点（26 个地区），解锁当地热门平台，流量均价最便宜；最多支持 3 个设备同时在线使用，无法通过重复购买叠加流量；价格 38.80 元">
+  <g font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif">
+    <rect x="10" y="10" width="400" height="580" rx="20" fill="#1c2c46" stroke="#2b3b55" stroke-width="1.5" />
+
+    <text x="38" y="68" font-size="26" font-weight="700" fill="#edf3ff">巨量不限时流量包</text>
+
+    <text x="38" y="108" font-size="17" fill="#aab7ca">包含流量</text>
+    <text x="114" y="108" font-size="17" fill="#b8c2d1">260 GB</text>
+
+    <g font-size="16.5" fill="#edf3ff">
+      <text x="38" y="176">🌊</text>
+      <text x="66" y="176">不限时永久流量，用完 260G 为止</text>
+
+      <text x="38" y="208">🎭</text>
+      <text x="66" y="208">额外的优化线路与 🥇 进阶系列节点</text>
+      <text x="66" y="236">（26 个地区）</text>
+
+      <text x="38" y="268">🎬</text>
+      <text x="66" y="268">解锁当地热门平台</text>
+
+      <text x="38" y="300">✨</text>
+      <text x="66" y="300">流量均价最便宜</text>
+    </g>
+
+    <g font-size="16.5" fill="#edf3ff">
+      <text x="38" y="360">最多支持 3 个设备同时在线使用</text>
+      <text x="38" y="390">无法通过重复购买叠加流量，最多 260G</text>
+    </g>
+
+    <text x="265" y="500" text-anchor="end" font-size="17" fill="#aab7ca">流量包</text>
+    <text x="382" y="503" text-anchor="end" font-size="30" font-weight="700" fill="#edf3ff">¥38.80</text>
+
+    <rect x="38" y="528" width="344" height="48" rx="24" fill="none" stroke="#ff8a8a" stroke-width="1.8" />
+    <text x="210" y="559" text-anchor="middle" font-size="17" fill="#ff8a8a">立即购买</text>
+  </g>
+</svg>
