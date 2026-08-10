@@ -235,6 +235,66 @@ Date:   Sat Aug 8 13:54:22 2026 +0800
 > [!TIP] 什么是 Commit Hash？
 > 运行 git log 时，每条记录开头那串由字母和数字组成的长字符串（如 上面的`6b83eb4...`）叫做 Commit Hash。它是 Git 根据本次提交的所有内容（作者、时间、改动文件等）算出的唯一身份 ID。后续如果想要回退版本、查看某次修改，只需要提供这个 Hash 的前 7 位字母数字即可。
 
+### 第二次提交变更
+
+Git 的工作流是可重复的：**修改 → 暂存 → 提交**。现在给 `README.md` 加点内容，完整走一遍第二次提交。在 Git Bash 里运行（`>>` 表示"追加到文件末尾"）：
+
+```sh
+echo "Hello Git!" >> README.md
+```
+
+先看看当前状态：
+
+```sh
+git status
+```
+
+```
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+`README.md` 显示为 "modified"（被修改）。想确认具体改了什么，运行：
+
+```sh
+git diff
+```
+
+```
+diff --git a/README.md b/README.md
+index 557db03..53fa24f 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,2 @@
+ Hello World!
++Hello Git!
+```
+
+以 `+` 开头的行表示新增的内容，以 `-` 开头的行表示被删除的内容。确认改动无误后，和第一次一样提交：
+
+```sh
+git add README.md
+git commit -m "docs: 更新 README"
+```
+
+再用 `git log` 查看历史，现在有两条记录了。加上 `--oneline` 参数可以让每条记录只占一行，历史一目了然：
+
+```sh
+git log --oneline
+```
+
+```
+7bc301e (HEAD -> master) docs: 更新 README
+6b83eb4 feat: 新建 README 文件
+```
+
+最上面是**最新**的提交。`HEAD -> master` 中的 `HEAD` 表示"当前所在的位置"，也就是你当前提交正停留在这里。
+
 ## 什么是 GitHub？
 
 如果说 **Git** 是你电脑里的“本地相册”，那么 **GitHub** 就是“代码界的朋友圈”。
@@ -450,23 +510,136 @@ GitHub 可以为仓库生成一个免费的静态网站。把 HTML 页面推送�
 > * [VitePress](https://vitepress.dev/zh/)：本教程的站点就是用 VitePress 搭建的，适合写文档、知识库或博客。
 > * [Hexo](https://hexo.io/zh-cn/)：国内流行、中文资料最多的博客框架之一，主题丰富。
 > * [Hugo](https://gohugo.io/)：基于 Go 语言，构建速度极快，主题丰富，也支持部署到 GitHub Pages。
-> * [Astro](https://astro.build/zh-cn/)：新兴的静态网站框架，组件化程度高，性能好，官方也提供了部署到 GitHub Pages 的教程。
+> * [Astro](https://docs.astro.build/zh-cn/getting-started/)：新兴的静态网站框架，组件化程度高，性能好，官方也提供了部署到 GitHub Pages 的教程。
+
+## 撤销与回滚
+
+写代码哪有不犯错的。Git 最大的好处之一就是：**改坏了，总有办法回得去**。下面按"错误的严重程度"从轻到重，介绍三种最常用的撤销方法。
+
+### 场景一：文件改坏了，但还没 `git add`
+
+此时文件只在工作区里，改动还没被"拍照"。用 `git restore` 把文件恢复到上一次提交时的样子，丢弃全部未暂存的修改：
+
+```sh
+git restore README.md
+```
+
+运行后再 `git status`，你会发现改动消失了，一切就像什么都没发生一样。
+
+### 场景二：`git add` 加错文件了，但还没 `git commit`
+
+文件已经进了暂存区，但还没有提交。用 `git restore --staged` 把它从暂存区移出去，文件内容不会被改动：
+
+```sh
+git restore --staged README.md
+```
+
+> [!NOTE]
+> 你在 `git status` 的提示里可能见过另一种写法：`git rm --cached`。两条命令作用相同，`git restore --staged` 是更新的写法，语义也更直观。
+
+### 场景三：已经 `git commit` 了，想回到某个旧版本
+
+这要分两种情况处理，区别在于**提交有没有推送（push）到 GitHub**。
+
+**情况 A：还没推送到远程仓库**，可以用 `git reset` 把提交历史"倒回去"。`HEAD~1` 表示"当前提交的前一个提交"：
+
+```sh
+git reset --hard HEAD~1
+```
+
+运行后，最新这条提交会被删除，文件也恢复到它之前的内容。
+
+> [!CAUTION] "--hard" 会丢弃改动，谨慎使用
+> `git reset --hard` 会**永久丢弃**该提交里的全部改动，无法找回。
+> 
+> 三个 `--` 参数的区别，本质是"撤销提交后，改动被放到哪里"：
+> 
+> * `git reset --soft`：撤销提交，但改动**留在暂存区**（绿色、`Changes to be committed` 状态），可以马上重新提交；
+> * `git reset`（默认 `--mixed`）：撤销提交，改动回到**工作区**（红色、`Changes not staged` 状态），可以重新编辑后再 `git add`；
+> * `git reset --hard`：撤销提交，改动**全部丢弃**，无法找回。
+> 
+> 另外，`git reset` 只能用在**尚未推送**的本地提交上。已经 push 到 GitHub 的提交，强行改历史会导致本地与远程不一致，协作时很容易把别人搞晕。
+
+**情况 B：已经推送到 GitHub**，请改用 `git revert`。它不会删除历史，而是**新增一条"反向"的提交**来抵消之前的改动。这样改动是向前叠加的，对参与协作的每个人都是安全的：
+
+```sh
+git revert HEAD
+```
+
+命令执行后会打开编辑器让你确认提交说明，保存关闭后撤销即完成，最后 `git push` 推上去即可。
+
+> [!CAUTION] 什么时候需要"强制推送"？
+> 如果你把**已经推送过的**提交在本地用 `git reset` 回退了，或者用工具改写了历史（比如用 `git-filter-repo` 清理历史里的密钥），再想 `git push` 时 Git 会拒绝："远端有你本地没有的提交"。
+> 
+> 此时可以强制推送，让远端的提交历史**直接覆盖成本地这份**：
+> 
+> ```sh
+> git push --force
+> ```
+> 
+> 但请务必谨慎：它会**丢弃远端上对应的旧历史**，如果别人已经克隆并基于它提交了新东西，这些内容会被覆盖甚至丢失。单人仓库或自己的分支上偶尔用一下没问题，多人协作的共享分支上尽量别用。
+> 
+> 如果一定要用，推荐更安全的 `git push --force-with-lease`：只有在你上次拉取之后没有别人往远端推新提交时才会执行，否则会拒绝，避免误伤别人。
+
+> [!TIP] 用 Commit Hash 指定任意版本
+> 上面用 `HEAD~1` 表示"上一个提交"。如果想回到更早的某个版本，也可以直接写该提交的 Hash（前 7 位即可），比如 `git reset --hard 6b83eb4`。在 `git log --oneline` 里就能查到每个提交的 Hash。
 
 ## 注意事项
 
 ### .gitignore 与安全提醒
 
-有些文件**不应该**被提交到仓库，比如密码、密钥、包含私人信息的配置文件（如 `token.txt`、`.env`）。你可以创建一个名为 `.gitignore` 的文本文件，把不想跟踪的文件或文件夹写进去（每行一个）：
+有些文件**不应该**被提交到仓库，比如密码、密钥、包含私人信息的配置文件（如 `token.txt`、`.env`）。你可以创建一个名为 `.gitignore` 的文本文件，把不想跟踪的文件或文件夹写进去（每行一个规则）：
 
 ```
 token.txt
 .env
 ```
 
-之后运行 `git add .` 时会自动跳过它们。
+之后运行 `git add .` 时会自动跳过它们。除了直接写文件名，`.gitignore` 还支持通配符、目录和取反规则：
+
+```
+# 忽略所有以 .log 结尾的文件
+*.log
+
+# 忽略整个文件夹
+node_modules/
+
+# 只忽略项目根目录下的 secret.txt（子目录里的同名文件不受影响）
+/secret.txt
+
+# 用 ! 取反，重新允许某个文件（需要先有匹配它的忽略规则）
+!keep.log
+```
+
+> [!TIP] 不用从零写
+> [github/gitignore](https://github.com/github/gitignore) 收集了按语言、平台分类的常用 `.gitignore` 模板，直接复制需要的部分即可，比自己摸索快得多。
+
+> [!IMPORTANT] 全局忽略
+> 有些文件你**永远**不想在任何项目里提交，比如 Windows 的 `Thumbs.db`、macOS 的 `.DS_Store`。与其每个项目都写一遍，不如为 Git 配置一个全局忽略文件：
+> 
+> ```sh
+> git config --global core.excludesFile ~/.gitignore_global
+> ```
+> 
+> 之后把通用规则写进 `~/.gitignore_global`，就所有仓库都生效了。
+
+> [!CAUTION] 已跟踪的文件不会生效
+> `.gitignore` 只对**尚未被跟踪**的文件生效。如果一个文件已经被 `git commit` 提交过，再把它写进 `.gitignore` 也没用——它依然会被继续跟踪。此时需要先用下面的命令把文件移出 Git 的跟踪（本地文件会保留）：
+> 
+> ```sh
+> git rm --cached 文件名
+> ```
 
 > [!CAUTION]
-> 不要把密码、API Key、SSH 私钥等内容提交到仓库。尤其是 **Public（公开）仓库**，一旦传上去，任何人都能看到。如果误提交了，除了在本地删除，还需要在 GitHub 上更换密钥或清理历史记录。
+> 不要把密码、API Key、SSH 私钥等内容提交到仓库。尤其是 **Public（公开）仓库**，一旦传上去，任何人都能看到，而它和它的所有历史会永远留在仓库里——即使在本地删除之后再次 `git add`、`git commit`，也**不会**删除之前的错误提交！这是 Git 的优势也是弊端——Git 很少会把你的文件真正删除，这使得你的文件不易丢失，你的隐私也是。
+> 
+> 如果误提交了，处理顺序应该是：
+> 
+> 1. **先去 GitHub 或云服务商把那个密钥吊销、换新的**。这是最重要的一步——改历史并不能"撤回"已经泄露的密钥，在你反应过来之前，它可能早已被爬虫和自动扫描脚本捡走；
+> 2. 再考虑清理历史：推荐用 [git-filter-repo](https://github.com/newren/git-filter-repo)（GitHub 官方推荐的清理工具，已取代 `git filter-branch`）把密钥从历史里抹掉，然后**强制推送**覆盖远端历史；
+> 3. 检查仓库是否被 Fork、是否出现在公开搜索里，必要时把仓库改成 **Private（私有）**。
+> 
+> 另外，GitHub 会对公开仓库自动扫描常见的密钥格式，一旦检测到就会向你发出警告（Secret scanning），提交前留意一下也不失为一道防线。
 
 ### 不要提交大文件
 
@@ -497,7 +670,7 @@ git diff
 
 到这里你已经能独立完成"本地提交 → 云端备份"的完整流程。
 
-需要更深入的学习时，可以参考以下资料：
+本文所介绍的 Git 功能只是冰山一角。多人协作常用的分支功能和处理冲突等知识并未提及。需要更深入的学习时，可以参考以下资料：
 
 * [Pro Git 中文版](https://git-scm.com/book/zh/v2)：Git 官方同源书籍，免费在线阅读，最权威也最系统。
 * [廖雪峰 Git 教程](https://www.liaoxuefeng.com/wiki/896043488029600)：中文经典入门教程，通俗易懂。
@@ -514,6 +687,13 @@ git diff
 | `git add .` | 把所有改动放入暂存区 |
 | `git commit -m "说明"` | 提交暂存区内容并附上说明 |
 | `git log` | 查看提交历史 |
+| `git log --oneline` | 查看提交历史（每条只占一行） |
+| `git diff` | 查看工作区里未暂存的具体改动 |
+| `git restore <文件>` | 丢弃工作区的改动，恢复该文件 |
+| `git restore --staged <文件>` | 把文件从暂存区移出（不改动内容） |
+| `git reset --hard <版本>` | 回退到指定版本，丢弃之后的提交与改动（仅限未推送的本地提交） |
+| `git revert <版本>` | 新增一条反向提交来撤销改动（适合已推送的提交） |
 | `git push` | 推送本地提交到远程仓库 |
+| `git push --force` | 强制推送，用本地历史覆盖远端（慎用） |
 | `git pull` | 拉取远程仓库的最新改动 |
 | `git clone <地址>` | 把远程仓库克隆到本地 |
