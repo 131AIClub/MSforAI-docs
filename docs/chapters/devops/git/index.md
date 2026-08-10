@@ -250,7 +250,7 @@ git status
 ```
 
 ```
-On branch main
+On branch master
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
@@ -289,11 +289,11 @@ git log --oneline
 ```
 
 ```
-7bc301e (HEAD -> main) docs: 更新 README
+7bc301e (HEAD -> master) docs: 更新 README
 6b83eb4 feat: 新建 README 文件
 ```
 
-最上面是**最新**的提交。`HEAD -> main` 中的 `HEAD` 表示"当前所在的位置"，也就是你当前提交正停留在这里。
+最上面是**最新**的提交。`HEAD -> master` 中的 `HEAD` 表示"当前所在的位置"，也就是你当前提交正停留在这里。
 
 ## 什么是 GitHub？
 
