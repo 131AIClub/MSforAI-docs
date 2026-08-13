@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { katex } from '@mdit/plugin-katex'
 import type { Token } from 'markdown-it'
 import { configureMarkdownAlerts } from './markdownAlerts'
 
@@ -28,15 +29,28 @@ export default defineConfig({
   lang: 'zh-CN',
   lastUpdated: true,
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/icon.png' }],
-    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css' }]
+    ['link', { rel: 'icon', type: 'image/png', href: '/icon.png' }]
   ],
   markdown: {
-    math: true,
+    math: false,
     lineNumbers: true,
     gfmAlerts: false,
     config(md) {
       configureMarkdownAlerts(md)
+      md.use(katex, {
+        delimiters: 'dollars',
+        throwOnError: false,
+        macros: {
+          '\\R': '\\mathbb{R}'
+        },
+        transformer(html, displayMode) {
+          return displayMode
+            ? html
+                .replace("<p class='katex-block'", "<p v-pre class='katex-block'")
+                .replace('<span class="katex"', '<span class="katex" data-math-display="block"')
+            : html.replace('<span class="katex"', '<span v-pre class="katex" data-math-display="inline"')
+        }
+      })
       const defaultFence = md.renderer.rules.fence ?? ((tokens, idx, options, _env, self) =>
         self.renderToken(tokens, idx, options))
       const defaultParagraphOpen = md.renderer.rules.paragraph_open ?? ((tokens, idx, options, _env, self) =>

@@ -767,6 +767,12 @@ button {
   margin-block: 18px;
 }
 
+.VPDoc .vp-doc .katex-block {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .VPDoc .vp-doc .ms-figure {
   margin: 28px auto;
   text-align: center;
