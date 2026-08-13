@@ -767,8 +767,41 @@ button {
   margin-block: 18px;
 }
 
+.VPDoc .vp-doc .ms-figure {
+  margin: 28px auto;
+  text-align: center;
+}
+
+.VPDoc .vp-doc .ms-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.VPDoc .vp-doc .ms-figure figcaption {
+  max-width: 760px;
+  margin: 10px auto 0;
+  color: var(--ms-secondary);
+  font-size: 13px;
+  line-height: 1.65;
+  text-align: center;
+}
+
 .VPDoc .vp-doc li + li {
   margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+  .VPDoc .vp-doc .ms-figure {
+    margin-block: 24px;
+  }
+
+  .VPDoc .vp-doc .ms-figure figcaption {
+    margin-top: 8px;
+    padding-inline: 8px;
+    font-size: 12px;
+  }
 }
 
 .VPDoc .vp-doc li::marker {
