@@ -7,6 +7,7 @@ import ChapterNavigationList from './ChapterNavigationList.vue'
 import ChapterSidebar from './ChapterSidebar.vue'
 import ChapterSidebarToggle from './ChapterSidebarToggle.vue'
 import DocumentContext from './DocumentContext.vue'
+import ImageLightbox from './ImageLightbox.vue'
 import ReaderControls from './ReaderControls.vue'
 import { enhanceCodeBlocks } from './codeBlocks'
 import { useHashScroll } from './hashScroll'
@@ -323,4 +324,5 @@ watch(() => page.value.relativePath, () => requestAnimationFrame(() => {
       <ArticleEnd v-if="isChapterPage" />
     </template>
   </DefaultTheme.Layout>
+  <ImageLightbox />
 </template>

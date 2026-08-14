@@ -794,6 +794,168 @@ button {
   text-align: center;
 }
 
+.VPDoc .vp-doc .ms-zoomable-image {
+  cursor: zoom-in;
+}
+
+.VPDoc .vp-doc .ms-zoomable-image:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 4px;
+}
+
+.image-lightbox {
+  --image-lightbox-control: rgb(255 255 255 / 78%);
+  --image-lightbox-control-hover: rgb(255 255 255 / 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 14px;
+  padding: 64px 24px 22px;
+  color: #fff;
+  background: rgb(8 12 20 / 92%);
+  backdrop-filter: blur(8px);
+}
+
+.image-lightbox__stage {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+  touch-action: none;
+  user-select: none;
+}
+
+.image-lightbox__stage.is-pannable {
+  cursor: grab;
+}
+
+.image-lightbox__stage.is-pannable:active {
+  cursor: grabbing;
+}
+
+.image-lightbox__stage:active .image-lightbox__image {
+  transition: none;
+}
+
+.image-lightbox__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform 120ms ease-out;
+  will-change: transform;
+}
+
+.image-lightbox__caption {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  color: rgb(255 255 255 / 72%);
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.image-lightbox__close,
+.image-lightbox__toolbar {
+  border: 1px solid rgb(255 255 255 / 14%);
+  color: var(--image-lightbox-control);
+  background: rgb(21 28 40 / 78%);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 22%);
+  backdrop-filter: blur(12px);
+}
+
+.image-lightbox__close {
+  position: absolute;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.image-lightbox__toolbar {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  justify-self: center;
+  border-radius: 999px;
+  padding: 5px;
+}
+
+.image-lightbox__toolbar button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  color: inherit;
+}
+
+.image-lightbox__toolbar output {
+  width: 58px;
+  color: rgb(255 255 255 / 84%);
+  font-family: var(--ms-mono);
+  font-size: 11px;
+  text-align: center;
+}
+
+.image-lightbox__divider {
+  width: 1px;
+  height: 18px;
+  margin-inline: 3px;
+  background: rgb(255 255 255 / 15%);
+}
+
+.image-lightbox__close:hover,
+.image-lightbox__toolbar button:hover:not(:disabled) {
+  color: var(--image-lightbox-control-hover);
+  background: rgb(255 255 255 / 12%);
+}
+
+.image-lightbox__close:focus-visible,
+.image-lightbox__toolbar button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.image-lightbox__toolbar button:disabled {
+  cursor: default;
+  opacity: 0.32;
+}
+
+.image-lightbox-enter-active,
+.image-lightbox-leave-active {
+  transition: opacity 160ms ease;
+}
+
+.image-lightbox-enter-active .image-lightbox__image,
+.image-lightbox-leave-active .image-lightbox__image {
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.image-lightbox-enter-from,
+.image-lightbox-leave-to,
+.image-lightbox-enter-from .image-lightbox__image,
+.image-lightbox-leave-to .image-lightbox__image {
+  opacity: 0;
+}
+
+.image-lightbox-enter-from .image-lightbox__image,
+.image-lightbox-leave-to .image-lightbox__image {
+  transform: scale(0.98);
+}
+
 .VPDoc .vp-doc li + li {
   margin-top: 6px;
 }
@@ -807,6 +969,33 @@ button {
     margin-top: 8px;
     padding-inline: 8px;
     font-size: 12px;
+  }
+
+  .image-lightbox {
+    gap: 10px;
+    padding: calc(58px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .image-lightbox__close {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+  }
+
+  .image-lightbox__caption {
+    padding-inline: 8px;
+    font-size: 12px;
+  }
+
+  .image-lightbox__toolbar button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-lightbox,
+  .image-lightbox__image {
+    transition: none !important;
   }
 }
 
