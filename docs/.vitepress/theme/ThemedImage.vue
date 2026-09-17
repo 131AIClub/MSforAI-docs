@@ -8,5 +8,8 @@ const resolvedSrc = computed(() => (isDark.value && props.dark ? props.dark : pr
 </script>
 
 <template>
-  <img :src="resolvedSrc" :alt="alt" />
+  <figure class="ms-figure">
+    <img :src="resolvedSrc" :alt="alt" />
+    <figcaption v-if="alt">{{ alt }}</figcaption>
+  </figure>
 </template>
