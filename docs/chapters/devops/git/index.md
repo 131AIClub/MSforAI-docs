@@ -415,7 +415,7 @@ git@github.com: Permission denied (publickey).
 git remote add origin git@github.com:你的用户名/你的仓库名.git
 ```
 
-添加远程仓库地址。
+添加远程仓库地址。这里的 `origin` 只是**远程地址的别名**，方便以后用 `git push origin`、`git pull origin` 来指代它——你也可以叫它别的名字，但 `origin` 是约定俗成的默认叫法。
 
 > [!CAUTION] 为什么不用 HTTPS + 密码？
 > GitHub 出于安全考虑，**已不再允许直接在终端输入账户密码进行登录**！如果你把上面的命令误写成了 HTTPS 形式：
@@ -454,7 +454,13 @@ To github.com:用户名/仓库.git
 branch 'main' set up to track 'origin/main'.
 ```
 
-说明你的第一个仓库已经推送到了 GitHub 上了！
+说明你的第一个仓库已经推送到了 GitHub 上了！推送成功之后，本地和远程之间就建立了一条双向通道：`git push` 把本地的提交送上去，`git pull` 把远程的改动拉下来。此时两边的历史完全一致：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+```
 
 ![](github_demo.png)
 
@@ -584,6 +590,310 @@ git revert HEAD
 > [!TIP] 用 Commit Hash 指定任意版本
 > 上面用 `HEAD~1` 表示"上一个提交"。如果想回到更早的某个版本，也可以直接写该提交的 Hash（前 7 位即可），比如 `git reset --hard 6b83eb4`。在 `git log --oneline` 里就能查到每个提交的 Hash。
 
+## 分支
+
+如何同时开发新功能和改旧 Bug？如何和他人协作开发一个项目？这正是 Git 的另一个重要用途：可以从某一个 commit 岔开分支，沿着不同的方向工作，日后再合并到同一条世界线中。
+
+这个功能叫做 branch（分支），它记录各个 commit 之间的关系。
+
+### 什么是分支？
+
+你可能以为"创建一个分支"就是把整个文件夹复制一份。其实不是。分支在 Git 里**只是一个指向某个 commit 的指针**——它几乎不占空间，创建和切换都快得察觉不到。
+
+刚刚我们 commit 了两个版本，用 Git 版本控制图可以描述为：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+```
+
+图中的每一个圆点是一次提交，`main` 就是指向最新提交的那根"指针"。每次 `git commit`，Git 都会自动把当前分支的指针往前挪一格。
+
+### 创建并切换分支
+
+假设现在要开发一个新功能，但又不想把还没写完的半成品混进 `main`。我们可以从当前所在的 `main` 岔出一条新分支：
+
+```sh
+git switch -c feature
+```
+
+输出：
+
+```
+Switched to a new branch 'feature'
+```
+
+> [!NOTE] `-c` 是 create 的意思
+> `git switch -c feature` 表示"创建并切换到 `feature` 分支"。如果分支已经存在，只想去切换，就用 `git switch feature`。
+>
+> 你可能在很多老教程里看到 `git checkout -b feature`，它和 `git switch -c` 完全等价。`git switch` 是较新的命令，专门负责切换分支，语义更清楚，推荐新手使用。
+
+用 `git branch` 可以查看当前有哪些本地分支，带 `*` 的就是你所在的分支：
+
+```sh
+git branch
+```
+
+```
+  feature
+* main
+```
+
+此时 `feature` 和 `main` 指向的是**同一个提交**，只是多了一根可以移动的指针，并没有复制任何文件：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+    branch feature
+```
+
+### 在分支上提交
+
+现在我们在 `feature` 分支上做一次提交。新建一个文件来代表新功能：
+
+```sh
+echo "这是新功能的代码" > feature.txt
+git add feature.txt
+git commit -m "feat: 开始开发新功能"
+```
+
+此时如果切回 `main`：
+
+```sh
+git switch main
+```
+
+打开文件夹，你会发现刚才的 `feature.txt` **不见了**！
+
+> [!IMPORTANT] 切换分支 = 切换工作区文件
+> 这是新手最容易困惑的一点：**分支记录的是文件的快照，切换分支时 Git 会把你工作区里的文件一起换成那个分支的样子**。所以 `main` 上看不到 `feature.txt`，是因为那个文件只存在于 `feature` 这条世界线上，并没有丢失。切回 `feature`，它就回来了。
+
+此时 `feature` 已经比 `main` 多走了一步：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+    branch feature
+    checkout feature
+    commit id: "开始开发新功能"
+```
+
+现在在 `main` 上再提交一个修复，模拟"两条线并行推进"：
+
+```sh
+echo "修复了一个小 bug" >> README.md
+git add README.md
+git commit -m "fix: 修复小 bug"
+```
+
+此时的历史图长这样：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+    branch feature
+    checkout feature
+    commit id: "开始开发新功能"
+    checkout main
+    commit id: "修复小 bug"
+```
+
+`main` 和 `feature` 从"第二次提交"这个点分岔，各自向前走了一步。
+
+### 合并分支
+
+新功能写完了，想把它并回 `main`。合并的方向是：**先站到接收方（`main`），再把对方（`feature`）合并进来**：
+
+```sh
+git switch main
+git merge feature
+```
+
+如果 `main` 在分岔之后**没有**新提交，Git 会直接"快进"——把 `main` 的指针直接挪到 `feature` 的位置，这叫 **fast-forward（快进合并）**：
+
+```
+Updating 7bc301e..a1b2c3d
+Fast-forward
+ feature.txt | 1 +
+ 1 file changed, 1 insertion(+)
+```
+
+但刚才我们在 `main` 上也提交了修复，两条线都有各自的进展，Git 无法快进，于是会创建一个新的 **合并提交（merge commit）**，把两条线汇到一起：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+    branch feature
+    checkout feature
+    commit id: "开始开发新功能"
+    checkout main
+    commit id: "修复小 bug"
+    merge feature id: "合并 feature"
+```
+
+> [!TIP] `--no-ff`：即使能快进也强行留下合并记录
+> 默认情况下，能快进时 Git 会直接快进，不生成合并提交。如果你希望**每一次合并都在历史上留下一个明确的"合并点"**，可以加上 `--no-ff`：
+>
+> ```sh
+> git merge --no-ff feature
+> ```
+>
+> 团队协作中不少项目会强制使用它，这样回看历史时能清楚看出"这个功能是整块合进来的"。
+
+合并完成后，`feature` 的使命就结束了，可以删掉它（`-d` 会检查它是否已经合并，未合并时会拒绝删除，起到保护作用）：
+
+```sh
+git branch -d feature
+```
+
+```
+Deleted branch feature (was a1b2c3d).
+```
+
+### 解决冲突
+
+只要两条分支改了**同一个文件的同一处**，合并时 Git 就不知道该听谁的，于是把选择权交给你，这就是**冲突（Conflict）**。
+
+我们来故意制造一次冲突。先在 `main` 上建一个文件并提交：
+
+```sh
+echo "我喜欢 Git" > note.txt
+git add note.txt
+git commit -m "docs: 添加 note"
+```
+
+从 `main` 岔出 `feature`，改掉这一行：
+
+```sh
+git switch -c feature
+echo "我喜欢 Git 和 GitHub" > note.txt
+git add note.txt
+git commit -m "docs: 补充 GitHub"
+```
+
+再回到 `main`，把**同一行**改成别的内容：
+
+```sh
+git switch main
+echo "我喜欢 Git 的分支" > note.txt
+git add note.txt
+git commit -m "docs: 补充分支"
+```
+
+两条分支从"添加 note"这个提交分岔，却都改了 `note.txt` 的同一行，冲突的种子就此埋下：
+
+```mermaid
+gitGraph
+    commit id: "添加 note"
+    branch feature
+    checkout feature
+    commit id: "补充 GitHub"
+    checkout main
+    commit id: "补充分支"
+```
+
+现在合并 `feature`，冲突出现了：
+
+```sh
+git merge feature
+```
+
+```
+Auto-merging note.txt
+CONFLICT (content): Merge conflict in note.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+用编辑器打开 `note.txt`，会看到 Git 插入的冲突标记：
+
+```
+<<<<<<< HEAD
+我喜欢 Git 的分支
+=======
+我喜欢 Git 和 GitHub
+>>>>>>> feature
+```
+
+这三组符号的含义是：
+
+* `<<<<<<< HEAD` 到 `=======` 之间：**当前分支（`main`）** 的内容；
+* `=======` 到 `>>>>>>> feature` 之间：**要合并进来的 `feature` 分支**的内容。
+
+> [!CAUTION] 冲突标记必须手动清理
+> **编辑时务必把 `<<<<<<<`、`=======`、`>>>>>>>` 这三行连同不要的内容一起删掉**，只留下最终想要的结果。如果把它们留在文件里就提交，文件里就会带着这串你不需要的符号。
+
+比如我们决定两者都要，把 `note.txt` 改成：
+
+```
+我喜欢 Git 和 GitHub 的分支
+```
+
+然后像平时一样暂存并提交，Git 就会完成这次合并：
+
+```sh
+git add note.txt
+git commit
+```
+
+```
+[main 3f9a1c2] Merge branch 'feature'
+```
+
+解决冲突后，Git 会生成一个合并提交，把两条线正式汇到一起：
+
+```mermaid
+gitGraph
+    commit id: "添加 note"
+    branch feature
+    checkout feature
+    commit id: "补充 GitHub"
+    checkout main
+    commit id: "补充分支"
+    merge feature id: "合并 feature"
+```
+
+> [!TIP] 冲突并不可怕
+> 在多人协作中，冲突是家常便饭。解决它的流程永远是固定的三步：**打开冲突文件手动修改 → `git add` → `git commit`**。改完可以用 `git status` 确认没有遗漏的冲突文件。
+
+### 把分支推送到 GitHub 与 Pull Request
+
+分支不只是本地概念，也可以推送到 GitHub：
+
+```sh
+git push -u origin feature
+```
+
+推送后打开 GitHub 的仓库页面，会出现 **Compare & pull request** 按钮。点击它就可以发起一个 **Pull Request（PR）**：把你的 `feature` 分支请求合并进 `main`。队友可以在 PR 里逐行审查你的改动、留言讨论，确认无误后再点击 **Merge**。
+
+这也是团队协作最主流的流程：**每个功能开一条分支 → 推送 → 开 PR → 审查合并**。合并之后，本地同步一下并清理分支：
+
+```sh
+git switch main
+git pull
+git branch -d feature
+```
+
+合并之后，版本历史里会留下一条从 `main` 岔出、再汇回 `main` 的支线——这正是 PR 的痕迹：
+
+```mermaid
+gitGraph
+    commit id: "新建 README"
+    commit id: "更新 README"
+    branch feature
+    checkout feature
+    commit id: "开发新功能"
+    checkout main
+    merge feature id: "合并 PR #1"
+```
+
+> [!TIP] 分支命名约定
+> 给分支起个一眼能看懂的名字。常见约定是"类型/简短描述"，例如 `feat/login`（新功能）、`fix/typo`（修 bug）、`docs/git-chapter`（写文档）。这和提交说明里的 `feat:`、`fix:` 前缀是配套的。
+
 ## 注意事项
 
 ### .gitignore 与安全提醒
@@ -648,7 +958,7 @@ Git 擅长管理文本文件，但**不适合存放大型二进制文件**（视
 如果确实需要分享大文件，可以：
 
 * 用云盘、网盘分享，或使用 Git 的 [LFS（Large File Storage）](https://git-lfs.com/) 扩展；
-* 或者干脆把大文件放在仓库外的路径，用 `.gitignore` 忽略掉。
+* 使用 GitHub Release 功能，发布源码编译的产物。
 
 ### 提交前检查改动
 
@@ -668,9 +978,9 @@ git diff
 
 ## 下一步
 
-到这里你已经能独立完成"本地提交 → 云端备份"的完整流程。
+到这里你已经能独立完成"本地提交 → 云端备份 → 分支协作"的完整流程。
 
-本文所介绍的 Git 功能只是冰山一角。多人协作常用的分支功能和处理冲突等知识并未提及。需要更深入的学习时，可以参考以下资料：
+本文所介绍的 Git 功能只是冰山一角。像 `git rebase`（变基）、`git stash`（临时储藏）、`git cherry-pick`（挑选提交）等进阶技巧都还没有涉及。需要更深入的学习时，可以参考以下资料：
 
 * [Pro Git 中文版](https://git-scm.com/book/zh/v2)：Git 官方同源书籍，免费在线阅读，最权威也最系统。
 * [廖雪峰 Git 教程](https://www.liaoxuefeng.com/wiki/896043488029600)：中文经典入门教程，通俗易懂。
@@ -697,3 +1007,8 @@ git diff
 | `git push --force` | 强制推送，用本地历史覆盖远端（慎用） |
 | `git pull` | 拉取远程仓库的最新改动 |
 | `git clone <地址>` | 把远程仓库克隆到本地 |
+| `git branch` | 查看本地分支（加 `-a` 可查看含远程的全部分支） |
+| `git switch -c <分支名>` | 创建并切换到新分支（等价旧写法 `git checkout -b`） |
+| `git switch <分支名>` | 切换到已有分支 |
+| `git merge <分支名>` | 把指定分支合并到当前分支 |
+| `git branch -d <分支名>` | 删除已合并的本地分支 |
