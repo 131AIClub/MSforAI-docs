@@ -14,6 +14,9 @@
   "dev@131aiclub.org": {
     "name": "131AIClub"
   },
+  "dev@glowled.top": {
+    "name": "GlowLED"
+  },
   "noreply@anthropic.com": {
     "name": "Claude Opus 5",
     "avatarUrl": "/static/contributors/claude.svg",
