@@ -181,7 +181,7 @@ jobs:
     name: Deploy to Alibaba Cloud
     needs: quality
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 15
     permissions:
       contents: read
 
@@ -197,8 +197,10 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
-          for variable in SSH_PRIVATE_KEY SERVER_HOST SERVER_USER; do
+          for variable in SSH_PRIVATE_KEY SERVER_HOST SERVER_USER OSS_ACCESS_KEY_ID OSS_ACCESS_KEY_SECRET; do
             if [[ -z "${!variable}" ]]; then
               echo "::error::${variable} is not configured. Add it under Settings → Secrets and variables → Actions."
               exit 1
@@ -222,48 +224,48 @@ jobs:
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" > /dev/null 2>&1 \
             || { echo "::error::Could not reach $SERVER_HOST on port $SERVER_PORT. Check that the port is open."; exit 1; }
 
-      - name: Resolve incremental transfer base
+      - name: Install ossutil
+        run: |
+          curl -sL "https://gosspublic.alicdn.com/ossutil/current/ossutil-linux-amd64.zip" -o /tmp/ossutil.zip
+          unzip -oq /tmp/ossutil.zip -d /tmp/ossutil-extract
+          sudo install /tmp/ossutil-extract/ossutil-linux-amd64/ossutil /usr/local/bin/ossutil
+          ossutil help 2>&1 | head -1
+
+      - name: Package and upload to OSS (accelerated)
         env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+          OSS_BUCKET: glowled-msforai-docs
+          OSS_UPLOAD_ENDPOINT: oss-accelerate-overseas.aliyuncs.com
           RELEASE_SHA: ${{ needs.quality.outputs.release_sha }}
         run: |
-          SSH_CMD="ssh -i ~/.ssh/msforai_deploy_key -p $SERVER_PORT -o BatchMode=yes -o ConnectTimeout=15"
-          PREV=$($SSH_CMD "$SERVER_USER@$SERVER_HOST" '
-            d=$(readlink /var/www/msforai-docs/current 2>/dev/null)
-            if [[ -z "$d" || ! -d "$d" ]]; then
-              d=$(ls -1dt /var/www/msforai-docs/releases/*/ 2>/dev/null | head -1)
-            fi
-            echo "${d%/}"
-          ' 2>/dev/null || true)
-          if [[ -n "$PREV" && "${PREV##*/}" != "$RELEASE_SHA" ]]; then
-            echo "PREV_RELEASE=${PREV##*/}" >> "$GITHUB_ENV"
-            echo "Incremental base: ${PREV##*/}"
-          else
-            echo "No incremental base; performing full transfer."
-          fi
+          tar -czf /tmp/site.tar.gz -C site/dist .
+          SITE_SHA256="$(sha256sum /tmp/site.tar.gz | cut -d' ' -f1)"
+          echo "SITE_SHA256=$SITE_SHA256" >> "$GITHUB_ENV"
+          echo "package size: $(du -h /tmp/site.tar.gz | cut -f1), sha256: $SITE_SHA256"
+          ossutil cp -f /tmp/site.tar.gz "oss://$OSS_BUCKET/releases/$RELEASE_SHA.tar.gz" \
+            -e "$OSS_UPLOAD_ENDPOINT" -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET"
 
-      - name: Upload site release (rsync, incremental)
+      - name: Deploy on server (OSS intranet download + atomic switch)
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
           RELEASE_SHA: ${{ needs.quality.outputs.release_sha }}
-        run: |
-          LINK_OPTS=()
-          [[ -n "${PREV_RELEASE:-}" ]] && LINK_OPTS=(--link-dest="/var/www/msforai-docs/releases/$PREV_RELEASE")
-          rsync -az --delete --partial --itemize-changes "${LINK_OPTS[@]}" \
-            -e "ssh -i ~/.ssh/msforai_deploy_key -p $SERVER_PORT -o BatchMode=yes -o ConnectTimeout=15" \
-            site/dist/ \
-            "$SERVER_USER@$SERVER_HOST:/var/www/msforai-docs/releases/$RELEASE_SHA/"
-
-      - name: Activate release atomically
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
-          RELEASE_SHA: ${{ needs.quality.outputs.release_sha }}
+          SITE_SHA256: ${{ env.SITE_SHA256 }}
+          OSS_BUCKET: glowled-msforai-docs
         run: |
           ssh -i ~/.ssh/msforai_deploy_key -p "$SERVER_PORT" -o BatchMode=yes -o ConnectTimeout=15 \
-            "$SERVER_USER@$SERVER_HOST" "/opt/msforai-docs/activate.sh $RELEASE_SHA"
+            "$SERVER_USER@$SERVER_HOST" "bash -s" -- \
+            "$RELEASE_SHA" "$OSS_BUCKET" "$SITE_SHA256" <<'REMOTE'
+            set -e
+            RELEASE="$1"; BUCKET="$2"; EXPECTED="$3"
+            echo "==> Downloading release from OSS (intranet)"
+            ossutil cp -f "oss://$BUCKET/releases/$RELEASE.tar.gz" /tmp/site.tar.gz
+            echo "$EXPECTED  /tmp/site.tar.gz" | sha256sum -c -
+            mkdir -p "/var/www/msforai-docs/releases/$RELEASE"
+            tar -xzf /tmp/site.tar.gz -C "/var/www/msforai-docs/releases/$RELEASE"
+            rm -f /tmp/site.tar.gz
+            /opt/msforai-docs/activate.sh "$RELEASE"
+            echo "OK: $RELEASE is live"
+          REMOTE
