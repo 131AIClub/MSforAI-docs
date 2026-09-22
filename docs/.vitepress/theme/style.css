@@ -3771,3 +3771,29 @@ html.chapter-sidebar-resizing * {
     overflow: visible;
   }
 }
+
+/* Mermaid 图表 */
+.mermaid {
+  margin: 1.5rem 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  line-height: normal;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.mermaid[data-error] {
+  color: var(--vp-c-danger-1);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.875rem;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}

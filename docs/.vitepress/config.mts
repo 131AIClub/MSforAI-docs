@@ -61,6 +61,9 @@ export default defineConfig({
       md.renderer.rules.fence = (tokens, idx, options, env, self) => {
         const token = tokens[idx]
         const info = token.info.trim()
+        if (info.split(/\s+/)[0] === 'mermaid') {
+          return `<pre class="mermaid">${md.utils.escapeHtml(token.content)}</pre>\n`
+        }
         const title = info.match(/\[([^\]]+)\]/)?.[1]?.trim()
         const html = defaultFence(tokens, idx, options, env, self)
         if (!title) return html
@@ -151,6 +154,11 @@ export default defineConfig({
           }
         }
       }
+    }
+  },
+  vite: {
+    optimizeDeps: {
+      include: ['mermaid']
     }
   }
 })

@@ -11,6 +11,7 @@ import ImageLightbox from './ImageLightbox.vue'
 import ReaderControls from './ReaderControls.vue'
 import { enhanceCodeBlocks } from './codeBlocks'
 import { useHashScroll } from './hashScroll'
+import { renderMermaid, watchMermaidTheme } from './mermaid'
 import { useOutlineFollow } from './outlineFollow'
 
 const SIDEBAR_KEY = 'msforai:chapter-sidebar'
@@ -36,6 +37,7 @@ let codeBlockObserver: MutationObserver | null = null
 let contentSizeObserver: ResizeObserver | null = null
 let articleLoadTimer: ReturnType<typeof setTimeout> | null = null
 let activeArticleLoad: string | null = null
+let stopMermaidThemeWatch: (() => void) | null = null
 let previousBeforePageLoad: Router['onBeforePageLoad']
 let previousAfterPageLoad: Router['onAfterPageLoad']
 let previousAfterRouteChange: Router['onAfterRouteChange']
@@ -237,7 +239,12 @@ function removeArticleLoadingHooks() {
 onMounted(() => {
   installArticleLoadingHooks()
   enhanceCodeBlocks()
-  codeBlockObserver = new MutationObserver(() => enhanceCodeBlocks())
+  void renderMermaid()
+  stopMermaidThemeWatch = watchMermaidTheme()
+  codeBlockObserver = new MutationObserver(() => {
+    enhanceCodeBlocks()
+    void renderMermaid()
+  })
   codeBlockObserver.observe(document.body, { childList: true, subtree: true })
   contentSizeObserver = new ResizeObserver(() => scheduleSidebarFooterOffsetSync())
   contentSizeObserver.observe(document.body)
@@ -255,6 +262,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   removeArticleLoadingHooks()
+  stopMermaidThemeWatch?.()
   codeBlockObserver?.disconnect()
   contentSizeObserver?.disconnect()
   cancelAnimationFrame(layoutReadyFrame)
@@ -267,6 +275,7 @@ onBeforeUnmount(() => {
 
 watch(() => page.value.relativePath, () => requestAnimationFrame(() => {
   enhanceCodeBlocks()
+  void renderMermaid()
   syncSidebarFooterOffset()
 }))
 </script>
